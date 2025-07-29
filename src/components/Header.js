@@ -10,10 +10,10 @@ export default function Header() {
 
   return (
     <header className="w-full bg-white text-slate-800 fixed top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Top row: Social icons on the right */}
         <div className="flex justify-end mb-4">
-          <div className="flex gap-4 text-slate-700">
+          <div className="flex gap-4 text-slate-700 mr-2">
             {/* Instagram */}
             <a href="#" className="hover:text-slate-900 transition-colors duration-300" aria-label="Instagram">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

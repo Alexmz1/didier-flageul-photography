@@ -2,14 +2,14 @@ export default function PhotographerSection() {
   return (
     <section className="py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
           {/* Image du photographe */}
           <div className="order-2 lg:order-1">
             <div className="relative">
               <img
                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                 alt="Portrait de Didier Flageul"
-                className="w-full h-[600px] object-cover"
+                className="w-full h-[400px] sm:h-[500px] lg:h-[600px] object-cover"
               />
             </div>
           </div>
@@ -44,12 +44,6 @@ export default function PhotographerSection() {
                 La lumière a une grande importance : je recherche des conditions lumineuses 
                 mais douces, souvent à contre-jour pour un effet poétique et magique.
               </p>
-            </div>
-
-            <div className="pt-8">
-              <button className="border border-slate-800 text-slate-800 px-8 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-800 hover:text-white transition-all duration-500">
-                En savoir plus
-              </button>
             </div>
           </div>
         </div>

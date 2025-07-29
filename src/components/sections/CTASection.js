@@ -90,7 +90,7 @@ export default function ReservationSection() {
   return (
     <section className="py-32 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-20 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-start">
           {/* Texte gauche */}
           <div className="space-y-8">
             <div className="space-y-6">
@@ -138,7 +138,7 @@ export default function ReservationSection() {
                       Demande de renseignements
                     </h3>
                     <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid md:grid-cols-2 gap-6">
+                      <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                         <input
                           type="text"
                           name="name"
@@ -159,7 +159,7 @@ export default function ReservationSection() {
                         />
                       </div>
 
-                      <div className="grid md:grid-cols-2 gap-6">
+                      <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                         <input
                           type="tel"
                           name="phone"

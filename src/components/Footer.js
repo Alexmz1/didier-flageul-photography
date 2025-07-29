@@ -3,14 +3,14 @@ import Link from "next/link"
 export default function Footer() {
   return (
     <footer className="bg-white text-slate-800 py-10 text-center border-t border-gray-200">
-      <div className="max-w-5xl mx-auto px-4 space-y-6 text-sm">
+      <div className="max-w-4xl mx-auto px-4 space-y-6 text-sm">
         {/* Logo script dans le footer */}
         <div className="text-2xl text-slate-800 font-bold tracking-wide" 
              style={{ fontFamily: "'Dancing Script', 'Brush Script MT', cursive" }}>
           Didier Flageul
         </div>
         
-        <div className="flex justify-center gap-6 font-light uppercase tracking-wider text-slate-700">
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 font-light uppercase tracking-wider text-slate-700">
           <Link href="/about" className="hover:text-slate-900 transition-colors duration-300">À propos</Link>
           <Link href="/services" className="hover:text-slate-900 transition-colors duration-300">Services</Link>
           <Link href="/booking" className="hover:text-slate-900 transition-colors duration-300">Réserver</Link>
