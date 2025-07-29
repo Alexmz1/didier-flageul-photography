@@ -11,12 +11,22 @@ export default function ReservationSection() {
     message: ''
   })
 
+  const [isSelectOpen, setIsSelectOpen] = useState(false)
+
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
       [name]: value
     }))
+  }
+
+  const handleSelectChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      shootingType: value
+    }))
+    setIsSelectOpen(false)
   }
 
   const handleSubmit = (e) => {
@@ -139,17 +149,50 @@ export default function ReservationSection() {
               </div>
               
               <div>
-                <select
-                  name="shootingType"
-                  value={formData.shootingType}
-                  onChange={handleInputChange}
-                  className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent text-slate-700 focus:outline-none focus:border-slate-600 transition-colors duration-300"
-                >
-                  <option value="">Type de séance souhaité</option>
-                  {shootingOptions.map((option, index) => (
-                    <option key={index} value={option}>{option}</option>
-                  ))}
-                </select>
+                <div className="relative">
+                  {/* Select custom */}
+                  <div 
+                    className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent text-slate-700 focus-within:border-slate-600 transition-colors duration-300 cursor-pointer"
+                    onClick={() => setIsSelectOpen(!isSelectOpen)}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className={formData.shootingType ? 'text-slate-700' : 'text-slate-400'}>
+                        {formData.shootingType || 'Type de séance souhaité'}
+                      </span>
+                      <svg 
+                        className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isSelectOpen ? 'rotate-180' : ''}`} 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  {/* Liste déroulante custom */}
+                  {isSelectOpen && (
+                    <div className="absolute top-full left-0 right-0 z-50 bg-white border border-slate-200 shadow-lg mt-1">
+                      {shootingOptions.map((option, index) => (
+                        <div
+                          key={index}
+                          className="px-4 py-3 text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors duration-150 border-b border-slate-100 last:border-b-0"
+                          onClick={() => handleSelectChange(option)}
+                        >
+                          {option}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Overlay pour fermer le select quand on clique ailleurs */}
+                  {isSelectOpen && (
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setIsSelectOpen(false)}
+                    />
+                  )}
+                </div>
               </div>
               
               <div>
