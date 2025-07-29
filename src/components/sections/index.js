@@ -1,0 +1,5 @@
+export { default as HeroSection } from './HeroSection'
+export { default as PhotographerSection } from './ApprochSection'
+export { default as GallerySection } from './InspirationSection'
+export { default as ShootingSection } from './ServicesSection'
+export { default as ReservationSection } from './CTASection'
