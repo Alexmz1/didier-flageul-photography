@@ -36,7 +36,7 @@ export default function ShootingSection() {
         {/* Titre de section */}
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-5xl font-light text-slate-800 mb-8" 
-              style={{ fontFamily: "'Dancing Script', 'Brush Script MT', cursive" }}>
+              style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
             Mes prestations
           </h2>
           <div className="w-24 h-px bg-slate-300 mx-auto mb-8"></div>
@@ -96,9 +96,9 @@ export default function ShootingSection() {
 
         {/* CTA bas de section */}
         <div className="text-center mt-20">
-          <button className="border border-slate-800 text-slate-800 px-12 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-800 hover:text-white transition-all duration-500">
-            Voir tous les tarifs
-          </button>
+          <a href="/services" className="inline-block border border-slate-800 text-slate-800 px-12 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-800 hover:text-white transition-all duration-500">
+            Voir tous les services
+          </a>
         </div>
       </div>
     </section>

@@ -109,7 +109,7 @@ export default function GallerySection() {
         {/* Titre de section - plus compact */}
         <div className="text-center mb-8 px-4">
           <h2 className="text-3xl md:text-4xl font-light text-slate-800 mb-4" 
-              style={{ fontFamily: "'Dancing Script', 'Brush Script MT', cursive" }}>
+              style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
             Des images douces et lumineuses
           </h2>
           <div className="w-16 h-px bg-slate-300 mx-auto mb-4"></div>
@@ -139,10 +139,13 @@ export default function GallerySection() {
         </div>
 
         {/* Texte en bas de section */}
-        <div className="text-center mt-8 px-4">
+        <div className="text-center mt-8 px-4 space-y-6">
           <p className="text-sm text-slate-500 italic">
             Chaque détail compte pour créer des photographies élégantes et intemporelles
           </p>
+          <a href="/gallery" className="inline-block border border-slate-800 text-slate-800 px-8 py-3 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-800 hover:text-white transition-all duration-500">
+            Voir toute la galerie
+          </a>
         </div>
       </div>
     </section>

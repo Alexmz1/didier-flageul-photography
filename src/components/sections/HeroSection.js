@@ -70,47 +70,40 @@ const images = [
       </button>
 
       {/* Contenu principal */}
-      <div className="relative z-20 h-full flex flex-col">
+      <div className="relative z-20 h-full flex items-center justify-center">
         {/* Section principale centrée */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center text-white px-4 max-w-5xl mx-auto">
-            {/* Logo/Nom du photographe */}
-            <div className="mb-8">
-              <h1 className="text-6xl md:text-8xl lg:text-9xl font-thin mb-4 tracking-[0.2em]" 
-                  style={{ fontFamily: "'Dancing Script', 'Brush Script MT', cursive" }}>
-                Didier Flageul
-              </h1>
-              <div className="w-24 h-px bg-white/60 mx-auto"></div>
-            </div>
-
-            {/* Sous-titre */}
-            <h2 className="text-sm md:text-base uppercase tracking-[0.4em] font-light mb-8 opacity-90 letterspacing">
-              Photographe
-            </h2>
-
-            {/* Description courte */}
-            <p className="text-lg md:text-xl leading-relaxed max-w-3xl mx-auto opacity-85 font-light mb-16">
-              Capturer l'essence de vos moments précieux avec élégance et poésie
-            </p>
+        <div className="text-center text-white px-6 max-w-6xl mx-auto">
+          {/* Logo/Nom du photographe */}
+          <div className="mb-16">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-thin mb-8 tracking-[0.15em] leading-tight" 
+                style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+              Didier Flageul
+            </h1>
+            <div className="w-32 h-px bg-white/70 mx-auto"></div>
           </div>
+
+          {/* Sous-titre */}
+          <h2 className="text-lg md:text-xl uppercase tracking-[0.3em] font-light opacity-90">
+            Photography
+          </h2>
         </div>
 
         {/* Indicateurs de carousel en bas - numérotés et fonctionnels */}
-        <div className="pb-16 flex justify-center">
-          <div className="flex space-x-8">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
+          <div className="flex space-x-6">
             {images.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentImage(index)}
                 className={`relative group transition-all duration-300 ${
-                  index === currentImage ? 'text-white' : 'text-white/40 hover:text-white/70'
+                  index === currentImage ? 'text-white' : 'text-white/50 hover:text-white/80'
                 }`}
               >
                 <span className="block text-sm font-light tracking-wider transition-all duration-300">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <div className={`absolute -bottom-2 left-1/2 -translate-x-1/2 h-px bg-white transition-all duration-500 ${
-                  index === currentImage ? 'w-8' : 'w-0 group-hover:w-4'
+                  index === currentImage ? 'w-10' : 'w-0 group-hover:w-6'
                 }`}></div>
               </button>
             ))}
