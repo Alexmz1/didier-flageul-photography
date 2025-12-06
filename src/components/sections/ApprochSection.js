@@ -7,9 +7,9 @@ export default function PhotographerSection() {
           <div className="order-2 lg:order-1">
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                src="/Didier1.jpeg"
                 alt="Portrait de Didier Flageul"
-                className="w-full h-[400px] sm:h-[500px] lg:h-[600px] object-cover"
+                className="w-full h-[400px] sm:h-[500px] lg:h-[600px] object-contain rounded-lg"
               />
             </div>
           </div>
@@ -18,8 +18,8 @@ export default function PhotographerSection() {
           <div className="order-1 lg:order-2 space-y-8">
             <div className="space-y-6">
               <h2 className="text-4xl md:text-5xl font-light text-slate-800 leading-tight" 
-                  style={{ fontFamily: "'Dancing Script', 'Brush Script MT', cursive" }}>
-                Photographie
+                  style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+                Didier Flageul
               </h2>
               <h3 className="text-xl uppercase tracking-[0.2em] text-slate-600 font-light">
                 Un style artistique
@@ -29,20 +29,15 @@ export default function PhotographerSection() {
             
             <div className="space-y-6 text-slate-700 leading-relaxed">
               <p className="text-lg font-light">
-                Je suis Didier Flageul, photographe passionné par la création d'images 
-                artistiques et poétiques. Mon approche se concentre sur la lumière, les 
-                émotions et les moments authentiques pour capturer la beauté de chaque instant.
+                Je suis Didier Flageul, photographe passionné, spécialisé dans la création d’images artistiques et intemporelles
               </p>
               
               <p className="text-lg font-light">
-                L'idée est de réaliser des images artistiques et poétiques, au-delà du simple 
-                reportage documentaire. J'apporte ma propre touche et mon regard unique à 
-                chaque prise de vue et retouche.
+                Inspiré par les grands studios comme Harcourt, je mets la lumière et l’émotion au cœur de chaque image pour sublimer vos mariages, portraits et books professionnels.
               </p>
               
               <p className="text-lg font-light">
-                La lumière a une grande importance : je recherche des conditions lumineuses 
-                mais douces, souvent à contre-jour pour un effet poétique et magique.
+                Chaque photo est pensée comme une œuvre unique, élégante et poétique, qui raconte votre histoire.
               </p>
             </div>
           </div>
