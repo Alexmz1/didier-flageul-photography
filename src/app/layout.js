@@ -13,12 +13,12 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-        <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
         <script type="module" src="https://unpkg.com/cally"></script>
       </head>
       <body className="bg-white text-navy font-serif overflow-x-hidden">
         <Header />
-        <main className="pt-24">{children}</main> {/* pt-24 à cause du header fixed */}
+        <main>{children}</main>
         <Footer />
       </body>
     </html>
