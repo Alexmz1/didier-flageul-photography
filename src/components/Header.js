@@ -9,8 +9,8 @@ export default function Header() {
   const toggleMenu = () => setIsOpen(!isOpen)
 
   return (
-    <header className="w-full bg-white text-slate-800 fixed top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 py-6">
+    <header className="w-full bg-white text-slate-800 fixed top-0 z-50 shadow-sm h-auto">
+      <div className="max-w-7xl mx-auto px-4 py-4">
         {/* Top row: Social icons on the right */}
         <div className="flex justify-end mb-4">
           <div className="flex gap-4 text-slate-700 mr-2">
