@@ -1,0 +1,351 @@
+"use client";
+
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import ImageUploader from "@/components/admin/ImageUploader";
+import { Playfair_Display, Cormorant_Garamond } from 'next/font/google';
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-playfair',
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-cormorant',
+});
+
+const CATEGORIES = [
+  "Hero (Page d'accueil)",
+  "Mariages",
+  "Portraits",
+  "Événements",
+  "Commercial",
+  "Famille",
+];
+
+export default function AdminDashboard() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [images, setImages] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const [editingImage, setEditingImage] = useState(null);
+  const [notification, setNotification] = useState(null);
+
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/admin");
+    }
+  }, [status, router]);
+
+  useEffect(() => {
+    // Charger les images depuis le localStorage
+    const savedImages = localStorage.getItem("gallery-images");
+    if (savedImages) {
+      setImages(JSON.parse(savedImages));
+    }
+  }, []);
+
+  const saveImages = (newImages) => {
+    setImages(newImages);
+    localStorage.setItem("gallery-images", JSON.stringify(newImages));
+  };
+
+  const handleImagesChange = (newImages) => {
+    // Vérifier la limite pour la catégorie Hero
+    if (selectedCategory === "Hero (Page d'accueil)") {
+      const heroImages = images.filter(img => img.category === "Hero (Page d'accueil)");
+      const newHeroImages = newImages.filter(img => !images.some(existing => existing.url === img.url));
+      
+      if (heroImages.length + newHeroImages.length > 5) {
+        showNotification('La catégorie Hero est limitée à 5 images maximum', 'error');
+        return;
+      }
+    }
+
+    // Ajouter la catégorie aux nouvelles images
+    const imagesWithCategory = newImages.map(img => ({
+      ...img,
+      category: selectedCategory,
+      uploadedAt: img.uploadedAt || new Date().toISOString(),
+    }));
+    saveImages(imagesWithCategory);
+  };
+
+  const handleEditImage = (imageUrl) => {
+    const imageToEdit = images.find((img) => img.url === imageUrl);
+    if (imageToEdit) {
+      setEditingImage(imageToEdit);
+      setSelectedCategory(imageToEdit.category);
+      // Scroll vers la section upload
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleReplaceImage = (newImage) => {
+    if (!editingImage) return;
+
+    // Remplacer l'ancienne image par la nouvelle
+    const updatedImages = images.map(img => 
+      img.url === editingImage.url 
+        ? { ...newImage, category: editingImage.category, uploadedAt: new Date().toISOString() }
+        : img
+    );
+    saveImages(updatedImages);
+    setEditingImage(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingImage(null);
+  };
+
+  const handleDelete = async (imageUrl) => {
+    const imageToDelete = images.find((img) => img.url === imageUrl);
+    
+    if (!imageToDelete || !imageToDelete.key) {
+      console.error('Image ou clé introuvable');
+      showNotification('Impossible de supprimer cette image', 'error');
+      return;
+    }
+
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette image ?')) {
+      return;
+    }
+
+    try {
+      // Supprimer l'image d'UploadThing
+      const response = await fetch('/api/delete-image', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ key: imageToDelete.key }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erreur lors de la suppression');
+      }
+
+      // Supprimer l'image de la liste
+      const updatedImages = images.filter((img) => img.url !== imageUrl);
+      saveImages(updatedImages);
+
+      showNotification('Image supprimée avec succès !', 'success');
+    } catch (error) {
+      console.error('Erreur suppression:', error);
+      showNotification(error.message, 'error');
+    }
+  };
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-base-100">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null;
+  }
+
+  return (
+    <div className={`min-h-screen bg-gray-50 pt-36 pb-12 px-6 ${playfair.variable} ${cormorant.variable}`}>
+      <div className="max-w-7xl mx-auto">
+        {/* Notification globale */}
+        {notification && (
+          <div className={`fixed top-40 right-6 z-50 p-4 shadow-lg max-w-md font-light transition-all ${
+            notification.type === 'success' 
+              ? 'bg-green-50 border-l-4 border-green-600 text-green-800' 
+              : 'bg-red-50 border-l-4 border-red-600 text-red-800'
+          }`}>
+            {notification.message}
+          </div>
+        )}
+        {/* En-tête */}
+        <div className="bg-white p-8 mb-12">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="text-center md:text-left">
+              <h1 className="text-4xl md:text-5xl font-light text-slate-800 mb-3" 
+                  style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+                Dashboard Admin
+              </h1>
+              <div className="w-24 h-px bg-slate-300 mx-auto md:mx-0"></div>
+            </div>
+            <button 
+              onClick={() => signOut({ callbackUrl: "/admin" })} 
+              className="border border-slate-300 text-slate-700 hover:bg-slate-800 hover:text-white hover:border-slate-800 font-light px-8 py-3 transition-colors flex items-center gap-2 uppercase tracking-wider text-sm"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Déconnexion
+            </button>
+          </div>
+        </div>
+
+        {/* Section Upload */}
+        <div className="bg-white p-8 lg:p-12 mb-8">
+          {editingImage && (
+            <div className="bg-slate-800 text-white p-4 mb-8 text-center">
+              <p className="text-sm font-light">
+                Mode modification : Vous allez remplacer l'image actuelle
+              </p>
+              <button
+                onClick={handleCancelEdit}
+                className="mt-2 text-xs underline hover:no-underline"
+              >
+                Annuler la modification
+              </button>
+            </div>
+          )}
+          <h2 className="text-3xl font-light text-slate-800 mb-8 text-center" 
+              style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+            {editingImage ? 'Modifier l\'image' : 'Ajouter une image'}
+          </h2>
+          <div className="w-16 h-px bg-slate-300 mx-auto mb-8"></div>
+          
+          {/* Select Catégorie */}
+          <div className="max-w-md mx-auto mb-8">
+            <label className="block text-sm font-light text-slate-700 mb-2">
+              Catégorie *
+            </label>
+            <div className="relative">
+              <div
+                className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
+                onClick={() => setIsSelectOpen(!isSelectOpen)}
+              >
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-700 font-light">
+                    {selectedCategory}
+                  </span>
+                  <svg
+                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isSelectOpen ? 'rotate-180' : ''}`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+
+              {isSelectOpen && (
+                <>
+                  <div className="absolute top-full left-0 right-0 z-50 bg-white shadow-lg border mt-1">
+                    {CATEGORIES.map((cat) => (
+                      <div
+                        key={cat}
+                        className="px-4 py-3 text-slate-700 hover:bg-slate-100 cursor-pointer border-b border-slate-200 last:border-0 transition-colors duration-150 font-light"
+                        onClick={() => {
+                          setSelectedCategory(cat)
+                          setIsSelectOpen(false)
+                        }}
+                      >
+                        {cat}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsSelectOpen(false)} />
+                </>
+              )}
+            </div>
+          </div>
+
+          <ImageUploader
+            images={[]}
+            onImagesChange={editingImage ? handleReplaceImage : handleImagesChange}
+            maxFiles={10}
+            editingImage={editingImage}
+            onCancelEdit={handleCancelEdit}
+          />
+        </div>
+
+        {/* Section Galerie */}
+        <div className="bg-white p-8 lg:p-12">
+          <div>
+            <h2 className="text-3xl font-light text-slate-800 mb-8 text-center" 
+                style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+              Galerie des images
+            </h2>
+            <div className="w-16 h-px bg-slate-300 mx-auto mb-12"></div>
+            
+            {CATEGORIES.map((category) => {
+              const categoryImages = images.filter(
+                (img) => img.category === category
+              );
+              
+              if (categoryImages.length === 0) return null;
+
+              return (
+                <div key={category} className="mb-12 last:mb-0">
+                  <div className="border-b border-slate-200 pb-3 mb-6">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-light text-slate-800" 
+                          style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+                        {category}
+                      </h3>
+                      <span className="text-sm text-slate-500 font-light">
+                        {categoryImages.length} {categoryImages.length > 1 ? 'images' : 'image'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {categoryImages.map((img) => (
+                      <div key={img.url} className="relative group overflow-hidden bg-gray-50">
+                        <img
+                          src={img.url}
+                          alt={category}
+                          className="w-full h-64 object-cover transition-opacity duration-300 group-hover:opacity-75"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+                          <button
+                            onClick={() => handleEditImage(img.url)}
+                            className="bg-white hover:bg-slate-800 text-slate-800 hover:text-white px-4 py-2 font-light text-sm transition-colors"
+                            title="Modifier l'image"
+                          >
+                            Modifier
+                          </button>
+                          <button
+                            onClick={() => handleDelete(img.url)}
+                            className="bg-white hover:bg-red-600 text-slate-800 hover:text-white px-4 py-2 font-light text-sm transition-colors"
+                            title="Supprimer l'image"
+                          >
+                            Supprimer
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+
+            {images.length === 0 && (
+              <div className="text-center py-24">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-slate-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <p className="text-lg font-light text-slate-600" 
+                   style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+                  Aucune image pour le moment
+                </p>
+                <p className="text-sm text-slate-500 mt-2 font-light">
+                  Commencez par uploader votre première image
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
