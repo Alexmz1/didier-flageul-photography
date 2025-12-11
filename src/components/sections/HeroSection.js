@@ -28,7 +28,7 @@ const images = [
   }
 
   return (
-    <section className="relative h-screen overflow-hidden bg-black">
+    <section className="relative h-screen overflow-hidden bg-black pt-36">
       {/* Carousel d'images avec effet Ken Burns */}
       <div className="absolute inset-0">
         {images.map((image, index) => (

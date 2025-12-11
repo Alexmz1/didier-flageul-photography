@@ -89,7 +89,7 @@ export default function Contact() {
   ]
 
   return (
-    <main className="min-h-screen bg-white pt-20">
+    <main className="min-h-screen bg-white pt-36">
       {/* Hero Section */}
       <section className="py-32 bg-gray-50 text-center">
         <div className="max-w-5xl mx-auto px-4">
