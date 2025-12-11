@@ -1,6 +1,7 @@
 import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import SessionProvider from '@/components/SessionProvider'
 
 export const metadata = {
   title: 'Nom du Photographe',
@@ -17,9 +18,11 @@ export default function RootLayout({ children }) {
         <script type="module" src="https://unpkg.com/cally"></script>
       </head>
       <body className="bg-white text-navy font-serif overflow-x-hidden">
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <SessionProvider>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   )
