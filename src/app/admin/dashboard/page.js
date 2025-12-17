@@ -268,7 +268,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 pt-36 pb-12 px-6 ${playfair.variable} ${cormorant.variable}`}>
+    <div className={`min-h-screen bg-gray-50 pt-48 pb-12 px-6 ${playfair.variable} ${cormorant.variable}`}>
       <div className="max-w-7xl mx-auto">
         {/* Notification globale */}
         {notification && (

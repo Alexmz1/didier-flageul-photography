@@ -44,7 +44,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className={`min-h-screen flex items-center justify-center bg-gray-50 pt-36 pb-12 ${playfair.variable} ${cormorant.variable}`}>
+    <div className={`min-h-screen flex items-center justify-center bg-gray-50 pt-48 pb-12 ${playfair.variable} ${cormorant.variable}`}>
       <div className="w-full max-w-md px-6">
         {/* En-tête élégante */}
         <div className="text-center mb-12">
