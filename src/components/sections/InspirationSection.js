@@ -1,5 +1,11 @@
+"use client"
+import { useState, useEffect } from 'react'
+
 export default function GallerySection() {
-  const galleryImages = [
+  const [galleryImages, setGalleryImages] = useState([])
+  
+  // Images par défaut si aucune image n'est uploadée
+  const defaultImages = [
     { 
       id: 1, 
       src: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", 
@@ -91,6 +97,50 @@ export default function GallerySection() {
       size: "small" 
     }
   ]
+
+  // Tailles disponibles pour la mosaïque
+  const sizes = ['large', 'wide', 'tall', 'medium', 'small']
+
+  // Fonction pour mélanger un tableau (Fisher-Yates shuffle)
+  const shuffleArray = (array) => {
+    const newArray = [...array]
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]]
+    }
+    return newArray
+  }
+
+  // Charger les images depuis localStorage et les mélanger
+  useEffect(() => {
+    const savedImages = localStorage.getItem('gallery-images')
+    
+    if (savedImages) {
+      const allImages = JSON.parse(savedImages)
+      
+      if (allImages.length > 0) {
+        // Mélanger toutes les images (y compris Hero)
+        const shuffledImages = shuffleArray(allImages)
+        
+        // Prendre 15 images (ou moins si pas assez)
+        const selectedImages = shuffledImages.slice(0, 15)
+        
+        // Assigner des tailles aléatoires de façon variée
+        const imagesWithSizes = selectedImages.map((img, index) => ({
+          id: `uploaded-${index}`,
+          src: img.url,
+          alt: img.name || img.category,
+          size: sizes[index % sizes.length] // Distribution variée des tailles
+        }))
+        
+        setGalleryImages(imagesWithSizes)
+      } else {
+        setGalleryImages(defaultImages)
+      }
+    } else {
+      setGalleryImages(defaultImages)
+    }
+  }, [])
 
   const getSizeClasses = (size) => {
     switch (size) {
