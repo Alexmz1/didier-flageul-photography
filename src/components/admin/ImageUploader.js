@@ -144,10 +144,10 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
       const newImages = images.filter((_, i) => i !== index)
       onImagesChange(newImages)
 
-      alert('✅ Image supprimée avec succès !')
+      showNotification('Image supprimée avec succès !', 'success')
     } catch (error) {
       console.error('Erreur suppression:', error)
-      alert('❌ ' + error.message)
+      showNotification(error.message, 'error')
     }
   }
 
@@ -161,9 +161,9 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
 
   return (
     <div className="space-y-8">
-      {/* Notification */}
+      {/* Notification fixe en haut à droite */}
       {notification && (
-        <div className={`p-4 text-center font-light transition-all ${
+        <div className={`fixed top-40 right-6 z-50 p-4 shadow-lg max-w-md font-light transition-all ${
           notification.type === 'success' 
             ? 'bg-green-50 border-l-4 border-green-600 text-green-800' 
             : 'bg-red-50 border-l-4 border-red-600 text-red-800'
