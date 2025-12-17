@@ -1,18 +1,30 @@
 "use client"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Gallery() {
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [photos, setPhotos] = useState([])
+  
+  // Mapper les catégories de l'admin vers les IDs de la galerie
+  const categoryMap = {
+    "Mariages": "wedding",
+    "Portraits": "portrait",
+    "Famille": "family",
+    "Événements": "event",
+    "Commercial": "commercial"
+  }
   
   const categories = [
     { id: 'all', name: 'Toutes' },
     { id: 'wedding', name: 'Mariages' },
-    { id: 'couple', name: 'Couples' },
     { id: 'portrait', name: 'Portraits' },
-    { id: 'family', name: 'Famille' }
+    { id: 'family', name: 'Famille' },
+    { id: 'event', name: 'Événements' },
+    { id: 'commercial', name: 'Commercial' }
   ]
 
-  const photos = [
+  // Photos par défaut si aucune image n'est uploadée
+  const defaultPhotos = [
     {
       id: 1,
       src: "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
@@ -99,6 +111,28 @@ export default function Gallery() {
     }
   ]
 
+  // Charger les images depuis le localStorage
+  useEffect(() => {
+    const savedImages = localStorage.getItem("gallery-images")
+    if (savedImages) {
+      const allImages = JSON.parse(savedImages)
+      
+      // Filtrer les images Hero (elles ne vont pas dans la galerie)
+      const galleryImages = allImages
+        .filter(img => img.category !== "Hero (Page d'accueil)")
+        .map((img, index) => ({
+          id: `uploaded-${index}`,
+          src: img.url,
+          category: categoryMap[img.category] || "wedding",
+          title: img.name || img.category,
+        }))
+      
+      setPhotos(galleryImages)
+    } else {
+      setPhotos([])
+    }
+  }, [])
+
   const filteredPhotos = selectedCategory === 'all' 
     ? photos 
     : photos.filter(photo => photo.category === selectedCategory)
@@ -140,26 +174,24 @@ export default function Gallery() {
           </div>
 
           {/* Gallery Grid */}
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 auto-rows-[150px]">
-            {filteredPhotos.map((photo) => (
-              <div
-                key={photo.id}
-                className={`${photo.span} group cursor-pointer overflow-hidden bg-gray-100 relative`}
-              >
-                <img
-                  src={photo.src}
-                  alt={photo.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-                  <div className="text-white text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <h3 className="text-lg font-light mb-2">{photo.title}</h3>
-                    <div className="w-8 h-px bg-white mx-auto"></div>
-                  </div>
+          {filteredPhotos.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-slate-500 font-light text-xl mb-4">Aucune image dans cette catégorie</p>
+              <p className="text-slate-400 font-light text-sm">Ajoutez des images depuis l'admin</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {filteredPhotos.map((photo) => (
+                <div key={photo.id} className="w-full">
+                  <img
+                    src={photo.src}
+                    alt={photo.title}
+                    className="w-full h-auto object-cover"
+                  />
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

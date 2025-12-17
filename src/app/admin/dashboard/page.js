@@ -5,6 +5,22 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ImageUploader from "@/components/admin/ImageUploader";
 import { Playfair_Display, Cormorant_Garamond } from 'next/font/google';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -27,6 +43,69 @@ const CATEGORIES = [
   "Famille",
 ];
 
+// Composant pour chaque image draggable
+function SortableImage({ image, onEdit, onDelete }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: image.url });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="relative group overflow-hidden bg-gray-50"
+    >
+      <img
+        src={image.url}
+        alt={image.category}
+        className="w-full h-64 object-cover transition-opacity duration-300 group-hover:opacity-75"
+      />
+
+      {/* Bouton Déplacer - toujours visible en haut à gauche */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="absolute top-2 left-2 bg-white hover:bg-slate-800 text-slate-800 hover:text-white px-3 py-2 font-light text-sm transition-colors cursor-move flex items-center gap-2 z-10"
+        title="Glisser pour réorganiser"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 8h16M4 16h16" />
+        </svg>
+        Déplacer
+      </div>
+
+      {/* Boutons d'action - visibles au survol */}
+      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+        <button
+          onClick={() => onEdit(image.url)}
+          className="bg-white hover:bg-slate-800 text-slate-800 hover:text-white px-4 py-2 font-light text-sm transition-colors"
+          title="Modifier l'image"
+        >
+          Modifier
+        </button>
+        <button
+          onClick={() => onDelete(image.url)}
+          className="bg-white hover:bg-red-600 text-slate-800 hover:text-white px-4 py-2 font-light text-sm transition-colors"
+          title="Supprimer l'image"
+        >
+          Supprimer
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -36,9 +115,35 @@ export default function AdminDashboard() {
   const [editingImage, setEditingImage] = useState(null);
   const [notification, setNotification] = useState(null);
 
+  // Sensors pour le drag & drop
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 5000);
+  };
+
+  // Gérer le drag & drop
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      setImages((items) => {
+        const oldIndex = items.findIndex((item) => item.url === active.id);
+        const newIndex = items.findIndex((item) => item.url === over.id);
+        
+        const newItems = arrayMove(items, oldIndex, newIndex);
+        localStorage.setItem("gallery-images", JSON.stringify(newItems));
+        return newItems;
+      });
+      
+      showNotification('Ordre des images modifié', 'success');
+    }
   };
 
   useEffect(() => {
@@ -78,7 +183,10 @@ export default function AdminDashboard() {
       category: selectedCategory,
       uploadedAt: img.uploadedAt || new Date().toISOString(),
     }));
-    saveImages(imagesWithCategory);
+    
+    // Fusionner avec les images existantes au lieu de les remplacer
+    const allImages = [...images, ...imagesWithCategory];
+    saveImages(allImages);
   };
 
   const handleEditImage = (imageUrl) => {
@@ -298,36 +406,31 @@ export default function AdminDashboard() {
                       </span>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {categoryImages.map((img) => (
-                      <div key={img.url} className="relative group overflow-hidden bg-gray-50">
-                        <img
-                          src={img.url}
-                          alt={category}
-                          className="w-full h-64 object-cover transition-opacity duration-300 group-hover:opacity-75"
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                          <button
-                            onClick={() => handleEditImage(img.url)}
-                            className="bg-white hover:bg-slate-800 text-slate-800 hover:text-white px-4 py-2 font-light text-sm transition-colors"
-                            title="Modifier l'image"
-                          >
-                            Modifier
-                          </button>
-                          <button
-                            onClick={() => handleDelete(img.url)}
-                            className="bg-white hover:bg-red-600 text-slate-800 hover:text-white px-4 py-2 font-light text-sm transition-colors"
-                            title="Supprimer l'image"
-                          >
-                            Supprimer
-                          </button>
-                        </div>
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={categoryImages.map((img) => img.url)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {categoryImages.map((img) => (
+                          <SortableImage
+                            key={img.url}
+                            image={img}
+                            onEdit={handleEditImage}
+                            onDelete={handleDelete}
+                          />
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </SortableContext>
+                  </DndContext>
                 </div>
               );
             })}
+            
 
             {images.length === 0 && (
               <div className="text-center py-24">
