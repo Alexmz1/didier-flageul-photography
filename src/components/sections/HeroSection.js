@@ -3,14 +3,43 @@ import { useState, useEffect } from 'react'
 
 export default function HeroSection() {
   const [currentImage, setCurrentImage] = useState(0)
+  const [images, setImages] = useState([])
   
-const images = [
+  // Images par défaut si aucune image n'est uploadée
+  const defaultImages = [
     { src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", alt: "Couple mariage romantique" },
     { src: "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", alt: "Portrait femme élégant" },
     { src: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", alt: "Séance famille lumineuse" },
     { src: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", alt: "Mariage" },
     { src: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", alt: "Portrait artistique" },
-]
+  ]
+
+  // Charger les images Hero depuis localStorage
+  useEffect(() => {
+    const savedImages = localStorage.getItem('gallery-images')
+    console.log('📸 localStorage gallery-images:', savedImages)
+    
+    if (savedImages) {
+      const allImages = JSON.parse(savedImages)
+      console.log('📸 Toutes les images:', allImages)
+      
+      const heroImages = allImages
+        .filter(img => {
+          console.log('📸 Vérification image:', img.category, 'Match:', img.category === 'Hero (Page d\'accueil)')
+          return img.category === 'Hero (Page d\'accueil)'
+        })
+        .map(img => ({
+          src: img.url,
+          alt: img.name || 'Image Hero'
+        }))
+      
+      console.log('📸 Images Hero filtrées:', heroImages)
+      setImages(heroImages.length > 0 ? heroImages : defaultImages)
+    } else {
+      console.log('📸 Pas d\'images sauvegardées, utilisation des images par défaut')
+      setImages(defaultImages)
+    }
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -28,7 +57,7 @@ const images = [
   }
 
   return (
-    <section className="relative h-screen overflow-hidden bg-black pt-36">
+    <section className="relative h-screen overflow-hidden bg-black pt-48">
       {/* Carousel d'images avec effet Ken Burns */}
       <div className="absolute inset-0">
         {images.map((image, index) => (
@@ -53,18 +82,18 @@ const images = [
       {/* Navigation carousel - flèches latérales plus discrètes */}
       <button
         onClick={prevImage}
-        className="absolute left-6 top-1/2 -translate-y-1/2 z-30 w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300 group"
+        className="absolute left-6 top-1/2 -translate-y-1/2 z-30 w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300 group"
       >
-        <svg className="w-4 h-4 group-hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-3 h-3 group-hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
       <button
         onClick={nextImage}
-        className="absolute right-6 top-1/2 -translate-y-1/2 z-30 w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300 group"
+        className="absolute right-6 top-1/2 -translate-y-1/2 z-30 w-6 h-6 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300 group"
       >
-        <svg className="w-4 h-4 group-hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-3 h-3 group-hover:scale-125 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5l7 7-7 7" />
         </svg>
       </button>
