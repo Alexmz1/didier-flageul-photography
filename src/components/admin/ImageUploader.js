@@ -21,13 +21,13 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
 
     // Vérifier la taille (32MB max)
     if (file.size > 32 * 1024 * 1024) {
-      showNotification('L\'image ne doit pas dépasser 32MB', 'error')
+      showNotification('La photo ne doit pas dépasser 32MB', 'error')
       return
     }
 
     // Vérifier le type
     if (!file.type.startsWith('image/')) {
-      showNotification('Veuillez sélectionner une image', 'error')
+      showNotification('Veuillez sélectionner une photo', 'error')
       return
     }
 
@@ -186,7 +186,7 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
             />
           </div>
           <p className="text-center text-sm text-slate-500 mt-4">
-            Sélectionnez une nouvelle image pour la remplacer
+            Sélectionnez une nouvelle photo pour la remplacer
           </p>
         </div>
       )}
@@ -220,7 +220,7 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
               />
             </svg>
             <span className="text-base font-light text-slate-700 mb-1">
-              Sélectionner une image
+              Sélectionner une photo
             </span>
             <span className="text-sm font-light text-slate-500">
               Maximum 32MB • JPG, PNG, WebP

@@ -307,7 +307,7 @@ export default function AdminDashboard() {
           {editingImage && (
             <div className="bg-slate-800 text-white p-4 mb-8 text-center">
               <p className="text-sm font-light">
-                Mode modification : Vous allez remplacer l'image actuelle
+                Mode modification : Vous allez remplacer la photo actuelle
               </p>
               <button
                 onClick={handleCancelEdit}
@@ -319,7 +319,7 @@ export default function AdminDashboard() {
           )}
           <h2 className="text-3xl font-light text-slate-800 mb-8 text-center" 
               style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
-            {editingImage ? 'Modifier l\'image' : 'Ajouter une image'}
+            {editingImage ? 'Modifier la photo' : 'Ajouter une photo'}
           </h2>
           <div className="w-16 h-px bg-slate-300 mx-auto mb-8"></div>
           
@@ -382,7 +382,7 @@ export default function AdminDashboard() {
           <div>
             <h2 className="text-3xl font-light text-slate-800 mb-8 text-center" 
                 style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
-              Galerie des images
+              Galerie des photos
             </h2>
             <div className="w-16 h-px bg-slate-300 mx-auto mb-12"></div>
             
@@ -402,7 +402,7 @@ export default function AdminDashboard() {
                         {category}
                       </h3>
                       <span className="text-sm text-slate-500 font-light">
-                        {categoryImages.length} {categoryImages.length > 1 ? 'images' : 'image'}
+                        {categoryImages.length} {categoryImages.length > 1 ? 'photos' : 'photo'}
                       </span>
                     </div>
                   </div>
@@ -439,10 +439,10 @@ export default function AdminDashboard() {
                 </svg>
                 <p className="text-lg font-light text-slate-600" 
                    style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
-                  Aucune image pour le moment
+                  Aucune photo pour le moment
                 </p>
                 <p className="text-sm text-slate-500 mt-2 font-light">
-                  Commencez par uploader votre première image
+                  Commencez par uploader votre première photo
                 </p>
               </div>
             )}
