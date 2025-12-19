@@ -2,14 +2,13 @@ export default function Services() {
   const services = [
     {
       title: "Mariage",
-      description: "Immortalisez votre jour unique.",
+      description: "Immortalisez votre journée unique.",
       image: "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       price: "À partir de 2500€",
       features: [
-        "Préparatifs et cérémonie",
         "Séance couple romantique",
-        "Galerie privée en ligne",
-        "200+ photos retouchées",
+        "Photos retouchées",
+        "Clé USB personnalisée",
         "Délai de livraison : 6 semaines"
       ]
     },
@@ -21,21 +20,19 @@ export default function Services() {
       features: [
         "1h30 de séance photo",
         "Conseils stylisme",
-        "Galerie privée en ligne",
-        "50+ photos retouchées",
+        "Photos retouchées",
         "Délai de livraison : 2 semaines"
       ]
     },
     {
       title: "Portrait Individuel",
-      description: "Révélez votre personnalité à travers des portraits artistiques et authentiques.",
+      description: "Révélez votre personnalité à travers des portraits artistiques et authentiques, pour un book ou simplement vos réseaux sociaux.",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       price: "À partir de 350€",
       features: [
         "1h de séance photo",
         "Plusieurs tenues possibles",
-        "Galerie privée en ligne",
-        "30+ photos retouchées",
+        "Photos retouchées",
         "Délai de livraison : 2 semaines"
       ]
     },
@@ -47,8 +44,7 @@ export default function Services() {
       features: [
         "1h30 de séance photo",
         "En extérieur ou à domicile",
-        "Galerie privée en ligne",
-        "40+ photos retouchées",
+        "Photos retouchées",
         "Délai de livraison : 2 semaines"
       ]
     }
@@ -65,7 +61,7 @@ export default function Services() {
           </h1>
           <div className="w-24 h-px bg-slate-300 mx-auto mb-8"></div>
           <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-3xl mx-auto">
-            Je propose une gamme complète de services photographiques, chacun adapté à vos besoins 
+            Je propose une gamme variée de services, chacun adapté à vos besoins 
             spécifiques et réalisé avec le même souci du détail et la même passion artistique.
           </p>
         </div>

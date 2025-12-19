@@ -148,8 +148,7 @@ export default function Gallery() {
           </h1>
           <div className="w-24 h-px bg-slate-300 mx-auto mb-8"></div>
           <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-3xl mx-auto">
-            Découvrez une sélection de mes travaux les plus récents, témoins de moments 
-            uniques et d'émotions authentiques capturés avec passion.
+            Découvrez une sélection de mes shootings les plus récents, uniques et d'émotions capturés avec passion.
           </p>
         </div>
       </section>

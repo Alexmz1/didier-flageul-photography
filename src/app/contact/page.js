@@ -99,8 +99,9 @@ export default function Contact() {
           </h1>
           <div className="w-24 h-px bg-slate-300 mx-auto mb-8"></div>
           <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-3xl mx-auto">
-            Vous avez un projet en tête ? Je serais ravi d'en discuter avec vous et de vous 
-            accompagner dans la création d'images uniques qui vous ressemblent.
+            Vous avez un projet en tête ? <br />
+            Je serais ravi d'en discuter avec vous et de vous 
+            accompagner dans la création de souvenirs uniques qui vous ressemblent.
           </p>
         </div>
       </section>
