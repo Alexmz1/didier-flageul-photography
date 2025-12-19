@@ -2,12 +2,14 @@
 
 import { useState, useRef } from 'react'
 import Image from 'next/image'
+import imageCompression from 'browser-image-compression'
 
-export default function ImageUploader({ images, onImagesChange, maxFiles = 1, editingImage = null, onCancelEdit = null }) {
+export default function ImageUploader({ images, onImagesChange, maxFiles = 1, editingImage = null, onCancelEdit = null, category = null }) {
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [notification, setNotification] = useState(null)
+  const [compressing, setCompressing] = useState(false)
   const fileInputRef = useRef(null)
 
   const showNotification = (message, type = 'success') => {
@@ -15,15 +17,37 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
     setTimeout(() => setNotification(null), 5000)
   }
 
-  const handleFileSelect = (e) => {
+  const compressImage = async (file) => {
+    // Options de compression pour images standard
+    const options = {
+      maxSizeMB: 0.4, // 400 Ko max
+      maxWidthOrHeight: 1600,
+      useWebWorker: true,
+      initialQuality: 0.85,
+      alwaysKeepResolution: false
+    }
+
+    try {
+      console.log('📦 Taille originale:', (file.size / 1024).toFixed(2), 'Ko')
+      const compressedFile = await imageCompression(file, options)
+      
+      // Préserver le nom original du fichier
+      const newFile = new File([compressedFile], file.name, {
+        type: compressedFile.type,
+        lastModified: Date.now()
+      })
+      
+      console.log('✅ Taille compressée:', (newFile.size / 1024).toFixed(2), 'Ko')
+      return newFile
+    } catch (error) {
+      console.error('Erreur compression:', error)
+      throw new Error('Erreur lors de la compression de la photo')
+    }
+  }
+
+  const handleFileSelect = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
-
-    // Vérifier la taille (32MB max)
-    if (file.size > 32 * 1024 * 1024) {
-      showNotification('La photo ne doit pas dépasser 32MB', 'error')
-      return
-    }
 
     // Vérifier le type
     if (!file.type.startsWith('image/')) {
@@ -31,14 +55,44 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
       return
     }
 
-    setSelectedFile(file)
+    // Ne pas compresser les images Hero
+    const isHero = category === "Hero (Page d'accueil)"
     
-    // Créer une prévisualisation
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setPreviewUrl(reader.result)
+    if (isHero) {
+      // Pas de compression pour Hero
+      setSelectedFile(file)
+      
+      // Créer une prévisualisation
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result)
+      }
+      reader.readAsDataURL(file)
+      
+      console.log('🖼️ Image Hero - Pas de compression:', (file.size / 1024).toFixed(0), 'Ko')
+    } else {
+      // Compression pour les autres catégories
+      setCompressing(true)
+
+      try {
+        const compressedFile = await compressImage(file)
+        
+        setSelectedFile(compressedFile)
+        
+        // Créer une prévisualisation
+        const reader = new FileReader()
+        reader.onloadend = () => {
+          setPreviewUrl(reader.result)
+        }
+        reader.readAsDataURL(compressedFile)
+        
+        showNotification(`Photo compressée : ${(compressedFile.size / 1024).toFixed(0)} Ko`, 'success')
+      } catch (error) {
+        showNotification(error.message, 'error')
+      } finally {
+        setCompressing(false)
+      }
     }
-    reader.readAsDataURL(file)
   }
 
   const handleUpload = async () => {
@@ -201,30 +255,47 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
             onChange={handleFileSelect}
             className="hidden"
             id="image-upload"
+            disabled={compressing}
           />
           <label
             htmlFor="image-upload"
-            className="cursor-pointer flex flex-col items-center"
+            className={`flex flex-col items-center ${compressing ? 'cursor-wait opacity-50' : 'cursor-pointer'}`}
           >
-            <svg
-              className="w-12 h-12 text-slate-400 mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            <span className="text-base font-light text-slate-700 mb-1">
-              Sélectionner une photo
-            </span>
-            <span className="text-sm font-light text-slate-500">
-              Maximum 32MB • JPG, PNG, WebP
-            </span>
+            {compressing ? (
+              <>
+                <div className="w-12 h-12 mb-4">
+                  <svg className="animate-spin text-slate-400" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </div>
+                <span className="text-base font-light text-slate-700 mb-1">
+                  Compression en cours...
+                </span>
+              </>
+            ) : (
+              <>
+                <svg
+                  className="w-12 h-12 text-slate-400 mb-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <span className="text-base font-light text-slate-700 mb-1">
+                  Sélectionner une photo
+                </span>
+                <span className="text-sm font-light text-slate-500">
+                  La photo sera automatiquement optimisée
+                </span>
+              </>
+            )}
           </label>
         </div>
       )}

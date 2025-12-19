@@ -374,6 +374,7 @@ export default function AdminDashboard() {
             maxFiles={10}
             editingImage={editingImage}
             onCancelEdit={handleCancelEdit}
+            category={selectedCategory}
           />
         </div>
 
