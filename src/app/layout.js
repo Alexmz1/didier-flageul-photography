@@ -4,7 +4,7 @@ import Footer from '@/components/Footer'
 import SessionProvider from '@/components/SessionProvider'
 
 export const metadata = {
-  title: 'Nom du Photographe',
+  title: 'Didier Flageul Photography',
   description: 'Photographe haut de gamme – Réservations en ligne',
 }
 
