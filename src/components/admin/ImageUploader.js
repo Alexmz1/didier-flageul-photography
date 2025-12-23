@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import Image from 'next/image'
 import imageCompression from 'browser-image-compression'
 
-export default function ImageUploader({ images, onImagesChange, maxFiles = 1, editingImage = null, onCancelEdit = null, category = null }) {
+export default function ImageUploader({ images, onImagesChange, maxFiles = 1, editingImage = null, onCancelEdit = null, category = null, currentImagesCount = 0 }) {
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -55,9 +55,18 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
       return
     }
 
-    // Ne pas compresser les images Hero
+    // Vérifier la limite pour Hero (sauf en mode édition)
     const isHero = category === "Hero (Page d'accueil)"
-    
+    if (isHero && !editingImage && currentImagesCount >= 5) {
+      showNotification('La catégorie Carrousel est limitée à 5 images maximum', 'error')
+      // Réinitialiser l'input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      return
+    }
+
+    // Ne pas compresser les images Hero
     if (isHero) {
       // Pas de compression pour Hero
       setSelectedFile(file)

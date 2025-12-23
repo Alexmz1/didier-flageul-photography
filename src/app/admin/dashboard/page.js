@@ -114,6 +114,10 @@ export default function AdminDashboard() {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [editingImage, setEditingImage] = useState(null);
   const [notification, setNotification] = useState(null);
+  const [visibleImagesCount, setVisibleImagesCount] = useState({});
+  const [activeTab, setActiveTab] = useState(CATEGORIES[0]);
+  
+  const IMAGES_PER_PAGE = 8; // 2 lignes de 4 images
 
   // Sensors pour le drag & drop
   const sensors = useSensors(
@@ -158,6 +162,13 @@ export default function AdminDashboard() {
     if (savedImages) {
       setImages(JSON.parse(savedImages));
     }
+    
+    // Initialiser le compteur d'images visibles pour chaque catégorie
+    const initialVisible = {};
+    CATEGORIES.forEach(cat => {
+      initialVisible[cat] = IMAGES_PER_PAGE;
+    });
+    setVisibleImagesCount(initialVisible);
   }, []);
 
   const saveImages = (newImages) => {
@@ -165,18 +176,15 @@ export default function AdminDashboard() {
     localStorage.setItem("gallery-images", JSON.stringify(newImages));
   };
 
-  const handleImagesChange = (newImages) => {
-    // Vérifier la limite pour la catégorie Hero
-    if (selectedCategory === "Hero (Page d'accueil)") {
-      const heroImages = images.filter(img => img.category === "Hero (Page d'accueil)");
-      const newHeroImages = newImages.filter(img => !images.some(existing => existing.url === img.url));
-      
-      if (heroImages.length + newHeroImages.length > 5) {
-        showNotification('La catégorie Hero est limitée à 5 images maximum', 'error');
-        return;
-      }
-    }
+  const loadMoreImages = (category) => {
+    setVisibleImagesCount(prev => ({
+      ...prev,
+      [category]: prev[category] + IMAGES_PER_PAGE
+    }));
+  };
 
+  const handleImagesChange = (newImages) => {
+    // La vérification est maintenant faite dans ImageUploader avant l'upload
     // Ajouter la catégorie aux nouvelles images
     const imagesWithCategory = newImages.map(img => ({
       ...img,
@@ -335,7 +343,7 @@ export default function AdminDashboard() {
               >
                 <div className="flex justify-between items-center">
                   <span className="text-slate-700 font-light">
-                    {selectedCategory}
+                    {selectedCategory === "Hero (Page d'accueil)" ? "Carrousel (Page d'accueil)" : selectedCategory}
                   </span>
                   <svg
                     className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isSelectOpen ? 'rotate-180' : ''}`}
@@ -358,7 +366,7 @@ export default function AdminDashboard() {
                           setIsSelectOpen(false)
                         }}
                       >
-                        {cat}
+                        {cat === "Hero (Page d'accueil)" ? "Carrousel (Page d'accueil)" : cat}
                       </div>
                     ))}
                   </div>
@@ -375,6 +383,7 @@ export default function AdminDashboard() {
             editingImage={editingImage}
             onCancelEdit={handleCancelEdit}
             category={selectedCategory}
+            currentImagesCount={images.filter(img => img.category === selectedCategory).length}
           />
         </div>
 
@@ -387,12 +396,34 @@ export default function AdminDashboard() {
             </h2>
             <div className="w-16 h-px bg-slate-300 mx-auto mb-12"></div>
             
+            {/* Onglets de filtrage */}
+            <div className="flex flex-wrap justify-center gap-4 mb-12">
+              {CATEGORIES.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setActiveTab(category)}
+                  className={`px-6 py-3 uppercase tracking-[0.15em] text-sm font-light transition-all duration-300 ${
+                    activeTab === category
+                      ? 'bg-slate-800 text-white'
+                      : 'border border-slate-300 text-slate-600 hover:border-slate-800 hover:text-slate-800'
+                  }`}
+                >
+                  {category === "Hero (Page d'accueil)" ? "Carrousel (Page d'accueil)" : category}
+                </button>
+              ))}
+            </div>
+            
             {CATEGORIES.map((category) => {
               const categoryImages = images.filter(
                 (img) => img.category === category
               );
               
+              // Afficher seulement si l'onglet correspond
+              if (activeTab !== category) return null;
               if (categoryImages.length === 0) return null;
+
+              const visibleImages = categoryImages.slice(0, visibleImagesCount[category] || IMAGES_PER_PAGE);
+              const hasMoreImages = categoryImages.length > visibleImages.length;
 
               return (
                 <div key={category} className="mb-12 last:mb-0">
@@ -400,7 +431,7 @@ export default function AdminDashboard() {
                     <div className="flex items-center justify-between">
                       <h3 className="text-xl font-light text-slate-800" 
                           style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
-                        {category}
+                        {category === "Hero (Page d'accueil)" ? "Carrousel (Page d'accueil)" : category}
                       </h3>
                       <span className="text-sm text-slate-500 font-light">
                         {categoryImages.length} {categoryImages.length > 1 ? 'photos' : 'photo'}
@@ -413,11 +444,11 @@ export default function AdminDashboard() {
                     onDragEnd={handleDragEnd}
                   >
                     <SortableContext
-                      items={categoryImages.map((img) => img.url)}
+                      items={visibleImages.map((img) => img.url)}
                       strategy={verticalListSortingStrategy}
                     >
                       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {categoryImages.map((img) => (
+                        {visibleImages.map((img) => (
                           <SortableImage
                             key={img.url}
                             image={img}
@@ -428,6 +459,24 @@ export default function AdminDashboard() {
                       </div>
                     </SortableContext>
                   </DndContext>
+                  
+                  {/* Bouton Voir plus */}
+                  {hasMoreImages && (
+                    <div className="text-center mt-8">
+                      <button
+                        onClick={() => loadMoreImages(category)}
+                        className="inline-flex items-center gap-2 px-8 py-3 border border-slate-300 text-slate-700 hover:bg-slate-800 hover:text-white hover:border-slate-800 font-light transition-colors uppercase tracking-wider text-sm"
+                      >
+                        Voir plus
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      <p className="text-xs text-slate-500 mt-2 font-light">
+                        {visibleImages.length} sur {categoryImages.length} photos affichées
+                      </p>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -444,6 +493,18 @@ export default function AdminDashboard() {
                 </p>
                 <p className="text-sm text-slate-500 mt-2 font-light">
                   Commencez par uploader votre première photo
+                </p>
+              </div>
+            )}
+            
+            {images.length > 0 && !CATEGORIES.some(cat => {
+              const categoryImages = images.filter(img => img.category === cat);
+              return cat === activeTab && categoryImages.length > 0;
+            }) && (
+              <div className="text-center py-24">
+                <p className="text-lg font-light text-slate-600" 
+                   style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+                  Aucune photo dans cette catégorie
                 </p>
               </div>
             )}
