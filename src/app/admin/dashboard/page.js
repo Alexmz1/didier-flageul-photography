@@ -276,8 +276,8 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 pt-48 pb-12 px-6 ${playfair.variable} ${cormorant.variable}`}>
-      <div className="max-w-7xl mx-auto">
+    <div className={`min-h-screen bg-white pt-48 pb-12 ${playfair.variable} ${cormorant.variable}`}>
+      <div className="w-full">
         {/* Notification globale */}
         {notification && (
           <div className={`fixed top-40 right-6 z-50 p-4 shadow-lg max-w-md font-light transition-all ${
@@ -289,7 +289,7 @@ export default function AdminDashboard() {
           </div>
         )}
         {/* En-tête */}
-        <div className="bg-white p-8 mb-12">
+        <div className="p-8 mb-0 max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-center md:text-left">
               <h1 className="text-4xl md:text-5xl font-light text-slate-800 mb-3" 
@@ -311,7 +311,8 @@ export default function AdminDashboard() {
         </div>
 
         {/* Section Upload */}
-        <div className="bg-white p-8 lg:p-12 mb-8">
+        <div className="bg-gray-50 py-16 px-6">
+          <div className="max-w-7xl mx-auto">
           {editingImage && (
             <div className="bg-slate-800 text-white p-4 mb-8 text-center">
               <p className="text-sm font-light">
@@ -386,10 +387,11 @@ export default function AdminDashboard() {
             currentImagesCount={images.filter(img => img.category === selectedCategory).length}
           />
         </div>
+        </div>
 
         {/* Section Galerie */}
-        <div className="bg-white p-8 lg:p-12">
-          <div>
+        <div className="bg-white py-16 px-6">
+          <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl font-light text-slate-800 mb-8 text-center" 
                 style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
               Galerie des photos
