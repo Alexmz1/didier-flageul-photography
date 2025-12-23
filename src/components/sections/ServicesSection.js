@@ -5,28 +5,32 @@ export default function ShootingSection() {
       description: "Un reportage élégant et lumineux de votre jour J",
       image: "https://images.unsplash.com/photo-1606800052052-a08af7148866?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       duration: "Journée complète",
-      price: "À partir de 2500€"
+      price: "À partir de 2500€",
+      link: "/services#mariage"
     },
     {
       title: "Séance Couple", 
       description: "Immortaliser votre amour avec poésie et romantisme",
       image: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       duration: "2h",
-      price: "À partir de 350€"
+      price: "À partir de 350€",
+      link: "/services#seance-couple"
     },
     {
       title: "Portrait Individuel",
       description: "Révéler votre personnalité à travers des portraits authentiques",
       image: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       duration: "1h30",
-      price: "À partir de 280€"
+      price: "À partir de 280€",
+      link: "/services#portrait-individuel"
     },
     {
       title: "Famille & Maternité",
       description: "Capturer les liens précieux et les moments tendres",
       image: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       duration: "1h30",
-      price: "À partir de 320€"
+      price: "À partir de 320€",
+      link: "/services#famille-maternite"
     }
   ]
 
@@ -85,9 +89,12 @@ export default function ShootingSection() {
                 </div>
                 
                 <div className="pt-6">
-                  <button className="text-xs uppercase tracking-[0.15em] text-slate-800 border-b border-slate-800 pb-1 hover:text-slate-600 hover:border-slate-600 transition-colors duration-300">
+                  <a 
+                    href={shooting.link}
+                    className="text-xs uppercase tracking-[0.15em] text-slate-800 border-b border-slate-800 pb-1 hover:text-slate-600 hover:border-slate-600 transition-colors duration-300"
+                  >
                     En savoir plus
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>

@@ -1,6 +1,7 @@
 export default function Services() {
   const services = [
     {
+      id: "mariage",
       title: "Mariage",
       description: "Immortalisez votre journée unique.",
       image: "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
@@ -13,6 +14,7 @@ export default function Services() {
       ]
     },
     {
+      id: "seance-couple",
       title: "Séance Couple",
       description: "Capturez la complicité et l'amour dans un cadre naturel et poétique.",
       image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
@@ -25,6 +27,7 @@ export default function Services() {
       ]
     },
     {
+      id: "portrait-individuel",
       title: "Portrait Individuel",
       description: "Révélez votre personnalité à travers des portraits artistiques et authentiques, pour un book ou simplement vos réseaux sociaux.",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
@@ -37,6 +40,7 @@ export default function Services() {
       ]
     },
     {
+      id: "famille-maternite",
       title: "Famille & Maternité",
       description: "Immortalisez les moments précieux de votre famille avec tendresse.",
       image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
@@ -72,7 +76,7 @@ export default function Services() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid gap-16">
             {services.map((service, index) => (
-              <div key={index} className={`grid lg:grid-cols-2 gap-8 lg:gap-16 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+              <div key={index} id={service.id} className={`grid lg:grid-cols-2 gap-8 lg:gap-16 items-center scroll-mt-48 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
                 {/* Image */}
                 <div className={`${index % 2 === 1 ? 'lg:order-2' : ''}`}>
                   <img
