@@ -57,8 +57,7 @@ export default function HeroSection() {
   }
 
   return (
-    <section className="relative h-screen overflow-hidden bg-black pt-48">
-      {/* Carousel d'images avec effet Ken Burns */}
+    <section className="relative h-screen w-full overflow-hidden bg-black mt-16">      {/* Carousel d'images avec effet Ken Burns */}
       <div className="absolute inset-0">
         {images.map((image, index) => (
           <div
@@ -70,7 +69,7 @@ export default function HeroSection() {
             <img
               src={image.src}
               alt={image.alt}
-              className="w-full h-full object-cover filter brightness-75 contrast-110"
+              className="w-full h-full object-cover object-center filter brightness-75 contrast-110"
             />
           </div>
         ))}
