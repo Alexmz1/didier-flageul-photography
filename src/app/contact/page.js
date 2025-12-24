@@ -15,6 +15,20 @@ export default function Contact() {
 
   const [isSelectOpen, setIsSelectOpen] = useState(false)
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+  const [isOnVacation, setIsOnVacation] = useState(false)
+  const [returnDate, setReturnDate] = useState('')
+
+  useEffect(() => {
+    const vacationStatus = localStorage.getItem("vacation-status")
+    if (vacationStatus) {
+      setIsOnVacation(JSON.parse(vacationStatus))
+    }
+    
+    const savedReturnDate = localStorage.getItem("return-date")
+    if (savedReturnDate) {
+      setReturnDate(savedReturnDate)
+    }
+  }, [])
 
   useEffect(() => {
     if (!isCalendarOpen) return
@@ -89,7 +103,8 @@ export default function Contact() {
   ]
 
   return (
-    <main className="min-h-screen bg-white pt-48">
+    <>
+      <main className="min-h-screen bg-white pt-48">
       {/* Hero Section */}
       <section className="py-32 bg-gray-50 text-center">
         <div className="max-w-5xl mx-auto px-4">
@@ -109,6 +124,21 @@ export default function Contact() {
       {/* Contact Section */}
       <section className="py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4">
+          {/* Message de congés au-dessus du formulaire */}
+          {isOnVacation && (
+            <div className="mb-12 bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-6 rounded" role="alert">
+              <div className="text-center">
+                <p className="font-light text-lg">
+                  🌴 Actuellement en congés. Les réservations sont temporairement suspendues.
+                  {returnDate && (
+                    <span className="block mt-2">Retour prévu le {new Date(returnDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}.</span>
+                  )}
+                </p>
+                <p className="text-sm mt-2">Je reviendrai vers vous dès mon retour. Merci de votre compréhension.</p>
+              </div>
+            </div>
+          )}
+          
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-20">
             {/* Informations de contact */}
             <div className="space-y-8">
@@ -267,8 +297,12 @@ export default function Contact() {
 
                     {isCalendarOpen && (
                       <>
-                        <div className="absolute top-full left-0 z-50 mt-2 bg-white shadow-lg border rounded-md p-4">
-                          <calendar-date style={{ color: '#1e293b', fontWeight: 400 }}>
+                        <div className="absolute top-full left-0 z-50 mt-2 bg-white shadow-lg border border-slate-300 rounded-md p-4">
+                          <calendar-date 
+                            class="cally bg-white"
+                            value={formData.eventDate}
+                            style={{ color: '#1e293b', fontWeight: 400 }}
+                          >
                             <svg aria-label="Previous" className="fill-current size-4 text-slate-600" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                               <path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
                             </svg>
@@ -401,5 +435,6 @@ export default function Contact() {
         </div>
       </section>
     </main>
+    </>
   )
 }

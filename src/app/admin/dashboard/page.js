@@ -116,6 +116,9 @@ export default function AdminDashboard() {
   const [notification, setNotification] = useState(null);
   const [visibleImagesCount, setVisibleImagesCount] = useState({});
   const [activeTab, setActiveTab] = useState(CATEGORIES[0]);
+  const [isOnVacation, setIsOnVacation] = useState(false);
+  const [returnDate, setReturnDate] = useState('');
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   
   const IMAGES_PER_PAGE = 8; // 2 lignes de 4 images
 
@@ -163,6 +166,18 @@ export default function AdminDashboard() {
       setImages(JSON.parse(savedImages));
     }
     
+    // Charger le statut de congés
+    const vacationStatus = localStorage.getItem("vacation-status");
+    if (vacationStatus) {
+      setIsOnVacation(JSON.parse(vacationStatus));
+    }
+    
+    // Charger la date de retour
+    const savedReturnDate = localStorage.getItem("return-date");
+    if (savedReturnDate) {
+      setReturnDate(savedReturnDate);
+    }
+    
     // Initialiser le compteur d'images visibles pour chaque catégorie
     const initialVisible = {};
     CATEGORIES.forEach(cat => {
@@ -170,6 +185,31 @@ export default function AdminDashboard() {
     });
     setVisibleImagesCount(initialVisible);
   }, []);
+
+  useEffect(() => {
+    if (!isCalendarOpen) return;
+
+    const calendar = document.querySelector('calendar-date');
+    if (!calendar) return;
+
+    const handleDateChange = () => {
+      const selectedDate =
+        calendar.getAttribute('value') ||
+        calendar.value ||
+        calendar.selectedDate ||
+        null;
+
+      if (selectedDate) {
+        handleReturnDateChange(selectedDate);
+        setIsCalendarOpen(false);
+      }
+    };
+
+    calendar.addEventListener('change', handleDateChange);
+    return () => {
+      calendar.removeEventListener('change', handleDateChange);
+    };
+  }, [isCalendarOpen]);
 
   const saveImages = (newImages) => {
     setImages(newImages);
@@ -181,6 +221,28 @@ export default function AdminDashboard() {
       ...prev,
       [category]: prev[category] + IMAGES_PER_PAGE
     }));
+  };
+
+  const handleVacationToggle = () => {
+    const newStatus = !isOnVacation;
+    setIsOnVacation(newStatus);
+    localStorage.setItem("vacation-status", JSON.stringify(newStatus));
+    
+    // Si on désactive le mode congés, effacer la date de retour
+    if (!newStatus) {
+      setReturnDate('');
+      localStorage.removeItem("return-date");
+    }
+    
+    showNotification(
+      newStatus ? 'Mode congés activé' : 'Mode congés désactivé',
+      'success'
+    );
+  };
+
+  const handleReturnDateChange = (date) => {
+    setReturnDate(date);
+    localStorage.setItem("return-date", date);
   };
 
   const handleImagesChange = (newImages) => {
@@ -307,6 +369,89 @@ export default function AdminDashboard() {
               </svg>
               Déconnexion
             </button>
+          </div>
+          
+          {/* Checkbox Mode Congés */}
+          <div className="mt-8 pt-8 border-t border-slate-200">
+            <div className="flex flex-col items-center gap-4">
+              <label htmlFor="vacation-mode" className="flex items-center cursor-pointer group">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    id="vacation-mode"
+                    checked={isOnVacation}
+                    onChange={handleVacationToggle}
+                    className="sr-only"
+                  />
+                  <div 
+                    className={`w-6 h-6 border-2 rounded-md flex items-center justify-center transition-all ${
+                      isOnVacation
+                        ? 'border-slate-800 bg-slate-800' 
+                        : 'border-slate-300 group-hover:border-slate-400'
+                    }`}
+                  >
+                    {isOnVacation && (
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <span className="ml-3 text-sm font-light text-slate-700">
+                  Activer le mode congés (affiche un message sur la page contact)
+                </span>
+              </label>
+              
+              {isOnVacation && (
+                <div className="w-full max-w-md">
+                  <div className="relative">
+                    <div className="text-sm font-light text-slate-700 mb-2">
+                      Date de retour :
+                    </div>
+                    <div
+                      className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
+                      onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className={returnDate ? 'text-slate-700' : 'text-slate-400'}>
+                          {returnDate
+                            ? new Date(returnDate + 'T00:00:00').toLocaleDateString('fr-FR', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric'
+                              })
+                            : "Sélectionner une date"}
+                        </span>
+                        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {isCalendarOpen && (
+                      <>
+                        <div className="absolute top-full left-0 z-50 mt-2 bg-white shadow-lg border border-slate-300 rounded-md p-4">
+                          <calendar-date 
+                            class="cally bg-white"
+                            value={returnDate}
+                            style={{ color: '#1e293b', fontWeight: 400 }}
+                          >
+                            <svg aria-label="Previous" className="fill-current size-4 text-slate-600" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                              <path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+                            </svg>
+                            <svg aria-label="Next" className="fill-current size-4 text-slate-600" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                              <path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+                            </svg>
+                            <calendar-month></calendar-month>
+                          </calendar-date>
+                        </div>
+                        <div className="fixed inset-0 z-40" onClick={() => setIsCalendarOpen(false)} />
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
