@@ -55,27 +55,48 @@ export async function POST(request) {
   }
 }
 
-// PUT - Mettre à jour l'ordre des images
+// PUT - Mettre à jour l'ordre des images ou une image individuelle
 export async function PUT(request) {
   try {
     const body = await request.json()
-    const { images } = body
     
-    // Mettre à jour l'ordre de toutes les images
-    await Promise.all(
-      images.map((img, index) =>
-        prisma.image.update({
-          where: { id: img.id },
-          data: { order: index }
-        })
+    // Si c'est un tableau d'images, mettre à jour l'ordre
+    if (body.images) {
+      const { images } = body
+      
+      // Mettre à jour l'ordre de toutes les images
+      await Promise.all(
+        images.map((img, index) =>
+          prisma.image.update({
+            where: { id: img.id },
+            data: { order: index }
+          })
+        )
       )
-    )
+      
+      return NextResponse.json({ success: true })
+    }
     
-    return NextResponse.json({ success: true })
+    // Sinon, mettre à jour une image individuelle (catégorie, etc.)
+    const { id, category } = body
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Image ID is required' },
+        { status: 400 }
+      )
+    }
+    
+    const updatedImage = await prisma.image.update({
+      where: { id },
+      data: { category }
+    })
+    
+    return NextResponse.json(updatedImage)
   } catch (error) {
-    console.error('Error updating images order:', error)
+    console.error('Error updating image:', error)
     return NextResponse.json(
-      { error: 'Failed to update images order' },
+      { error: 'Failed to update image' },
       { status: 500 }
     )
   }

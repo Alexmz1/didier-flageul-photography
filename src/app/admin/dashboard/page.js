@@ -114,6 +114,8 @@ export default function AdminDashboard() {
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const [editingImage, setEditingImage] = useState(null);
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [notification, setNotification] = useState(null);
   const [visibleImagesCount, setVisibleImagesCount] = useState({});
   const [activeTab, setActiveTab] = useState(CATEGORIES[0]);
@@ -330,7 +332,7 @@ export default function AdminDashboard() {
       
       // Mettre à jour l'état local
       setImages([...images, ...addedImages]);
-      showNotification('Image(s) ajoutée(s) avec succès !', 'success');
+      showNotification('Image uploadée avec succès !', 'success');
     } catch (error) {
       console.error('Error saving images:', error);
       showNotification('Erreur lors de l\'ajout des images', 'error');
@@ -341,9 +343,52 @@ export default function AdminDashboard() {
     const imageToEdit = images.find((img) => img.url === imageUrl);
     if (imageToEdit) {
       setEditingImage(imageToEdit);
-      setSelectedCategory(imageToEdit.category);
+      setEditingCategory(imageToEdit.category);
       // Scroll vers la section upload
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    // Si une nouvelle image est sélectionnée, déclencher l'upload
+    const uploadButton = document.querySelector('#trigger-upload');
+    if (uploadButton) {
+      uploadButton.click();
+      return;
+    }
+    
+    // Sinon, juste mettre à jour la catégorie si elle a changé
+    if (editingImage && editingCategory !== editingImage.category) {
+      try {
+        setUploading(true);
+        const response = await fetch('/api/images', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: editingImage.id,
+            category: editingCategory
+          })
+        });
+        
+        if (response.ok) {
+          const updatedImage = await response.json();
+          const updatedImages = images.map(img => 
+            img.id === editingImage.id ? updatedImage : img
+          );
+          setImages(updatedImages);
+          setEditingImage(null);
+          setEditingCategory(null);
+          showNotification('Catégorie modifiée avec succès !', 'success');
+        }
+      } catch (error) {
+        console.error('Error updating category:', error);
+        showNotification('Erreur lors de la modification', 'error');
+      } finally {
+        setUploading(false);
+      }
+    } else {
+      // Rien à faire, juste fermer
+      handleCancelEdit();
     }
   };
 
@@ -371,7 +416,7 @@ export default function AdminDashboard() {
           url: newImage.url,
           key: newImage.key,
           name: newImage.name,
-          category: editingImage.category
+          category: editingCategory // Utiliser la catégorie éditée
         })
       });
 
@@ -384,6 +429,7 @@ export default function AdminDashboard() {
         );
         setImages(updatedImages);
         setEditingImage(null);
+        setEditingCategory(null);
         showNotification('Image remplacée avec succès !', 'success');
       }
     } catch (error) {
@@ -394,6 +440,7 @@ export default function AdminDashboard() {
 
   const handleCancelEdit = () => {
     setEditingImage(null);
+    setEditingCategory(null);
   };
 
   const handleDelete = async (imageUrl) => {
@@ -574,79 +621,166 @@ export default function AdminDashboard() {
         {/* Section Upload */}
         <div className="bg-gray-50 py-16 px-6">
           <div className="max-w-7xl mx-auto">
-          {editingImage && (
-            <div className="bg-slate-800 text-white p-4 mb-8 text-center">
-              <p className="text-sm font-light">
-                Mode modification : Vous allez remplacer la photo actuelle
-              </p>
-              <button
-                onClick={handleCancelEdit}
-                className="mt-2 text-xs underline hover:no-underline"
-              >
-                Annuler la modification
-              </button>
+          {editingImage ? (
+            // Mode édition avec layout gauche/droite
+            <div>
+              <h2 className="text-3xl font-light text-slate-800 mb-8 text-center" 
+                  style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+                Modifier la photo
+              </h2>
+              <div className="w-16 h-px bg-slate-300 mx-auto mb-12"></div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                {/* Image à gauche */}
+                <div className="flex flex-col">
+                  <ImageUploader
+                    images={[]}
+                    onImagesChange={handleReplaceImage}
+                    maxFiles={1}
+                    editingImage={editingImage}
+                    onCancelEdit={handleCancelEdit}
+                    category={editingCategory}
+                    currentImagesCount={0}
+                    uploading={uploading}
+                    setUploading={setUploading}
+                  />
+                </div>
+                
+                {/* Contrôles à droite */}
+                <div className="flex flex-col justify-center gap-6">
+                  <div>
+                    <label className="block text-sm font-light text-slate-700 mb-3">
+                      Catégorie *
+                    </label>
+                    <div className="relative">
+                      <div
+                        className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
+                        onClick={() => setIsSelectOpen(!isSelectOpen)}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="text-slate-700 font-light">
+                            {editingCategory === "Hero (Page d'accueil)" ? "Carrousel (Page d'accueil)" : editingCategory}
+                          </span>
+                          <svg
+                            className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isSelectOpen ? 'rotate-180' : ''}`}
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {isSelectOpen && (
+                        <>
+                          <div className="absolute top-full left-0 right-0 z-50 bg-white shadow-lg border mt-1">
+                            {CATEGORIES.map((cat) => (
+                              <div
+                                key={cat}
+                                className="px-4 py-3 text-slate-700 hover:bg-slate-100 cursor-pointer border-b border-slate-200 last:border-0 transition-colors duration-150 font-light"
+                                onClick={() => {
+                                  setEditingCategory(cat)
+                                  setIsSelectOpen(false)
+                                }}
+                              >
+                                {cat === "Hero (Page d'accueil)" ? "Carrousel (Page d'accueil)" : cat}
+                              </div>
+                            ))}
+                          </div>
+                          <div className="fixed inset-0 z-40" onClick={() => setIsSelectOpen(false)} />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm font-light text-slate-600 mt-4">
+                    Cliquez sur l'image à gauche ou déposez une nouvelle image pour la remplacer.
+                  </p>
+                  
+                  {/* Boutons Annuler / Enregistrer */}
+                  <div className="flex gap-4 mt-4">
+                    <button
+                      onClick={handleCancelEdit}
+                      className="flex-1 border border-slate-300 text-slate-700 hover:border-slate-800 hover:text-slate-800 font-light px-6 py-3 transition-colors uppercase tracking-wider text-sm"
+                      disabled={uploading}
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      onClick={handleSaveEdit}
+                      disabled={uploading}
+                      className="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-light px-6 py-3 transition-colors uppercase tracking-wider text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {uploading ? 'Upload en cours...' : 'Enregistrer'}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
-          <h2 className="text-3xl font-light text-slate-800 mb-8 text-center" 
-              style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
-            {editingImage ? 'Modifier la photo' : 'Ajouter une photo'}
-          </h2>
-          <div className="w-16 h-px bg-slate-300 mx-auto mb-8"></div>
-          
-          {/* Select Catégorie */}
-          <div className="max-w-md mx-auto mb-8">
-            <label className="block text-sm font-light text-slate-700 mb-2">
-              Catégorie *
-            </label>
-            <div className="relative">
-              <div
-                className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
-                onClick={() => setIsSelectOpen(!isSelectOpen)}
-              >
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-700 font-light">
-                    {selectedCategory === "Hero (Page d'accueil)" ? "Carrousel (Page d'accueil)" : selectedCategory}
-                  </span>
-                  <svg
-                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isSelectOpen ? 'rotate-180' : ''}`}
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          ) : (
+            // Mode ajout normal
+            <div>
+              <h2 className="text-3xl font-light text-slate-800 mb-8 text-center" 
+                  style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+                Ajouter une photo
+              </h2>
+              <div className="w-16 h-px bg-slate-300 mx-auto mb-8"></div>
+              
+              {/* Select Catégorie */}
+              <div className="max-w-md mx-auto mb-8">
+                <label className="block text-sm font-light text-slate-700 mb-2">
+                  Catégorie *
+                </label>
+                <div className="relative">
+                  <div
+                    className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
+                    onClick={() => setIsSelectOpen(!isSelectOpen)}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
-                  </svg>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-700 font-light">
+                        {selectedCategory === "Hero (Page d'accueil)" ? "Carrousel (Page d'accueil)" : selectedCategory}
+                      </span>
+                      <svg
+                        className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isSelectOpen ? 'rotate-180' : ''}`}
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {isSelectOpen && (
+                    <>
+                      <div className="absolute top-full left-0 right-0 z-50 bg-white shadow-lg border mt-1">
+                        {CATEGORIES.map((cat) => (
+                          <div
+                            key={cat}
+                            className="px-4 py-3 text-slate-700 hover:bg-slate-100 cursor-pointer border-b border-slate-200 last:border-0 transition-colors duration-150 font-light"
+                            onClick={() => {
+                              setSelectedCategory(cat)
+                              setIsSelectOpen(false)
+                            }}
+                          >
+                            {cat === "Hero (Page d'accueil)" ? "Carrousel (Page d'accueil)" : cat}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="fixed inset-0 z-40" onClick={() => setIsSelectOpen(false)} />
+                    </>
+                  )}
                 </div>
               </div>
 
-              {isSelectOpen && (
-                <>
-                  <div className="absolute top-full left-0 right-0 z-50 bg-white shadow-lg border mt-1">
-                    {CATEGORIES.map((cat) => (
-                      <div
-                        key={cat}
-                        className="px-4 py-3 text-slate-700 hover:bg-slate-100 cursor-pointer border-b border-slate-200 last:border-0 transition-colors duration-150 font-light"
-                        onClick={() => {
-                          setSelectedCategory(cat)
-                          setIsSelectOpen(false)
-                        }}
-                      >
-                        {cat === "Hero (Page d'accueil)" ? "Carrousel (Page d'accueil)" : cat}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsSelectOpen(false)} />
-                </>
-              )}
+              <ImageUploader
+                images={[]}
+                onImagesChange={handleImagesChange}
+                maxFiles={10}
+                editingImage={null}
+                onCancelEdit={handleCancelEdit}
+                category={selectedCategory}
+                currentImagesCount={images.filter(img => img.category === selectedCategory).length}
+              />
             </div>
-          </div>
-
-          <ImageUploader
-            images={[]}
-            onImagesChange={editingImage ? handleReplaceImage : handleImagesChange}
-            maxFiles={10}
-            editingImage={editingImage}
-            onCancelEdit={handleCancelEdit}
-            category={selectedCategory}
-            currentImagesCount={images.filter(img => img.category === selectedCategory).length}
-          />
+          )}
         </div>
         </div>
 

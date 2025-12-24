@@ -4,13 +4,21 @@ import { useState, useRef } from 'react'
 import Image from 'next/image'
 import imageCompression from 'browser-image-compression'
 
-export default function ImageUploader({ images, onImagesChange, maxFiles = 1, editingImage = null, onCancelEdit = null, category = null, currentImagesCount = 0 }) {
+export default function ImageUploader({ images, onImagesChange, maxFiles = 1, editingImage = null, onCancelEdit = null, category = null, currentImagesCount = 0, uploading: externalUploading, setUploading: setExternalUploading }) {
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [notification, setNotification] = useState(null)
   const [compressing, setCompressing] = useState(false)
   const fileInputRef = useRef(null)
+  const uploadButtonRef = useRef(null)
+
+  // Synchroniser l'état d'upload avec le parent si fourni
+  const isUploading = externalUploading !== undefined ? externalUploading : uploading
+  const setIsUploading = (value) => {
+    setUploading(value)
+    if (setExternalUploading) setExternalUploading(value)
+  }
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type })
@@ -107,7 +115,7 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
   const handleUpload = async () => {
     if (!selectedFile) return
 
-    setUploading(true)
+    setIsUploading(true)
 
     try {
       // Utiliser notre endpoint d'upload personnalisé
@@ -165,12 +173,12 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
         fileInputRef.current.value = ''
       }
 
-      showNotification(editingImage ? 'Image modifiée avec succès !' : 'Image uploadée avec succès !', 'success')
+      // Ne pas afficher la notification ici, le parent la gère après sauvegarde en BDD
     } catch (error) {
       console.error('Erreur upload:', error)
       showNotification(error.message, 'error')
     } finally {
-      setUploading(false)
+      setIsUploading(false)
     }
   }
 
@@ -236,26 +244,21 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
       )}
       {/* Affichage de l'image en cours de modification */}
       {editingImage && !previewUrl && (
-        <div className="bg-white border border-slate-200 p-6 mb-6">
-          <h3 className="text-lg font-light text-slate-700 mb-4 text-center">
-            Image actuelle
-          </h3>
-          <div className="relative w-full h-64 overflow-hidden bg-gray-50">
+        <div className="relative cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+          <div className="relative w-full h-96 overflow-hidden bg-white">
             <Image
               src={editingImage.url}
               alt="Image à modifier"
               fill
               className="object-contain"
+              unoptimized
             />
           </div>
-          <p className="text-center text-sm text-slate-500 mt-4">
-            Sélectionnez une nouvelle photo pour la remplacer
-          </p>
         </div>
       )}
 
       {/* Zone de sélection d'image */}
-      {!previewUrl && (editingImage || images.length < maxFiles) && (
+      {!previewUrl && !editingImage && images.length < maxFiles && (
         <div className="border-2 border-dashed border-slate-300 p-12 text-center bg-white hover:border-slate-400 transition-colors">
           <input
             ref={fileInputRef}
@@ -309,49 +312,69 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
         </div>
       )}
 
+      {/* Input caché pour le mode édition */}
+      {editingImage && (
+        <>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            className="hidden"
+            id="image-upload-edit"
+            disabled={compressing}
+          />
+          {/* Bouton caché pour déclencher l'upload depuis le parent */}
+          {previewUrl && (
+            <button
+              ref={uploadButtonRef}
+              id="trigger-upload"
+              onClick={handleUpload}
+              className="hidden"
+            />
+          )}
+        </>
+      )}
+
       {/* Prévisualisation de l'image sélectionnée */}
       {previewUrl && (
-        <div className="bg-white border border-slate-200 p-8">
-          <h3 className="text-xl font-light text-slate-800 mb-6 text-center" 
-              style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
-            Prévisualisation
-          </h3>
-          <div className="relative w-full h-96 mb-6 overflow-hidden bg-gray-50">
+        <div className="space-y-6">
+          <div className="relative w-full h-96 overflow-hidden bg-white">
             <Image
               src={previewUrl}
               alt="Prévisualisation"
               fill
               className="object-contain"
+              unoptimized
             />
           </div>
-          <div className="space-y-4">
-            <div className="text-center text-sm font-light text-slate-600 space-y-1">
-              <p>{selectedFile?.name}</p>
-              <p className="text-slate-500">
-                {(selectedFile?.size / 1024 / 1024).toFixed(2)} MB
-              </p>
-            </div>
-            <div className="flex gap-4 justify-center pt-4">
+          
+          {/* Informations sur le fichier */}
+          <div className="text-center text-sm font-light text-slate-600 space-y-1">
+            <p>{selectedFile?.name}</p>
+            <p className="text-slate-500">
+              {(selectedFile?.size / 1024 / 1024).toFixed(2)} MB
+            </p>
+          </div>
+          
+          {/* Boutons pour le mode ajout uniquement */}
+          {!editingImage && (
+            <div className="flex gap-4 justify-center">
               <button
                 type="button"
-                onClick={() => {
-                  cancelSelection()
-                  if (editingImage && onCancelEdit) {
-                    onCancelEdit()
-                  }
-                }}
+                onClick={cancelSelection}
                 className="px-8 py-3 border border-slate-300 text-slate-700 font-light hover:bg-slate-50 transition-colors"
-                disabled={uploading}
+                disabled={isUploading}
               >
                 Annuler
               </button>
               <button
                 type="button"
                 onClick={handleUpload}
-                disabled={uploading}
+                disabled={isUploading}
                 className="px-8 py-3 bg-slate-800 hover:bg-slate-900 text-white font-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {uploading ? (
+                {isUploading ? (
                   <span className="flex items-center gap-2">
                     <span className="loading loading-spinner loading-sm"></span>
                     Envoi en cours...
@@ -361,7 +384,7 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
                 )}
               </button>
             </div>
-          </div>
+          )}
         </div>
       )}
 
