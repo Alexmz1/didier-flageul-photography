@@ -244,21 +244,26 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
       )}
       {/* Affichage de l'image en cours de modification */}
       {editingImage && !previewUrl && (
-        <div className="relative cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-          <div className="relative w-full h-96 overflow-hidden bg-white">
+        <div className="bg-white border border-slate-200 p-6 mb-6">
+          <h3 className="text-lg font-light text-slate-700 mb-4 text-center">
+            Image actuelle
+          </h3>
+          <div className="relative w-full h-64 overflow-hidden bg-gray-50">
             <Image
               src={editingImage.url}
               alt="Image à modifier"
               fill
               className="object-contain"
-              unoptimized
             />
           </div>
+          <p className="text-center text-sm text-slate-500 mt-4">
+            Sélectionnez une nouvelle photo pour la remplacer
+          </p>
         </div>
       )}
 
       {/* Zone de sélection d'image */}
-      {!previewUrl && !editingImage && images.length < maxFiles && (
+      {!previewUrl && (editingImage || images.length < maxFiles) && (
         <div className="border-2 border-dashed border-slate-300 p-12 text-center bg-white hover:border-slate-400 transition-colors">
           <input
             ref={fileInputRef}
@@ -312,57 +317,37 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
         </div>
       )}
 
-      {/* Input caché pour le mode édition */}
-      {editingImage && (
-        <>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileSelect}
-            className="hidden"
-            id="image-upload-edit"
-            disabled={compressing}
-          />
-          {/* Bouton caché pour déclencher l'upload depuis le parent */}
-          {previewUrl && (
-            <button
-              ref={uploadButtonRef}
-              id="trigger-upload"
-              onClick={handleUpload}
-              className="hidden"
-            />
-          )}
-        </>
-      )}
-
       {/* Prévisualisation de l'image sélectionnée */}
       {previewUrl && (
-        <div className="space-y-6">
-          <div className="relative w-full h-96 overflow-hidden bg-white">
+        <div className="bg-white border border-slate-200 p-8">
+          <h3 className="text-xl font-light text-slate-800 mb-6 text-center" 
+              style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+            Prévisualisation
+          </h3>
+          <div className="relative w-full h-96 mb-6 overflow-hidden bg-gray-50">
             <Image
               src={previewUrl}
               alt="Prévisualisation"
               fill
               className="object-contain"
-              unoptimized
             />
           </div>
-          
-          {/* Informations sur le fichier */}
-          <div className="text-center text-sm font-light text-slate-600 space-y-1">
-            <p>{selectedFile?.name}</p>
-            <p className="text-slate-500">
-              {(selectedFile?.size / 1024 / 1024).toFixed(2)} MB
-            </p>
-          </div>
-          
-          {/* Boutons pour le mode ajout uniquement */}
-          {!editingImage && (
-            <div className="flex gap-4 justify-center">
+          <div className="space-y-4">
+            <div className="text-center text-sm font-light text-slate-600 space-y-1">
+              <p>{selectedFile?.name}</p>
+              <p className="text-slate-500">
+                {(selectedFile?.size / 1024 / 1024).toFixed(2)} MB
+              </p>
+            </div>
+            <div className="flex gap-4 justify-center pt-4">
               <button
                 type="button"
-                onClick={cancelSelection}
+                onClick={() => {
+                  cancelSelection()
+                  if (editingImage && onCancelEdit) {
+                    onCancelEdit()
+                  }
+                }}
                 className="px-8 py-3 border border-slate-300 text-slate-700 font-light hover:bg-slate-50 transition-colors"
                 disabled={isUploading}
               >
@@ -384,7 +369,7 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
                 )}
               </button>
             </div>
-          )}
+          </div>
         </div>
       )}
 
