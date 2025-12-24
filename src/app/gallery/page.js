@@ -111,26 +111,35 @@ export default function Gallery() {
     }
   ]
 
-  // Charger les images depuis le localStorage
+  // Charger les images depuis l'API
   useEffect(() => {
-    const savedImages = localStorage.getItem("gallery-images")
-    if (savedImages) {
-      const allImages = JSON.parse(savedImages)
-      
-      // Filtrer les images Hero (elles ne vont pas dans la galerie)
-      const galleryImages = allImages
-        .filter(img => img.category !== "Hero (Page d'accueil)")
-        .map((img, index) => ({
-          id: `uploaded-${index}`,
-          src: img.url,
-          category: categoryMap[img.category] || "wedding",
-          title: img.name || img.category,
-        }))
-      
-      setPhotos(galleryImages)
-    } else {
-      setPhotos([])
+    const fetchGalleryImages = async () => {
+      try {
+        const response = await fetch('/api/images')
+        if (response.ok) {
+          const allImages = await response.json()
+          
+          // Filtrer les images Hero (elles ne vont pas dans la galerie)
+          const galleryImages = allImages
+            .filter(img => img.category !== "Hero (Page d'accueil)")
+            .map((img, index) => ({
+              id: img.id || `uploaded-${index}`,
+              src: img.url,
+              category: categoryMap[img.category] || "wedding",
+              title: img.name || img.category,
+            }))
+          
+          setPhotos(galleryImages)
+        } else {
+          setPhotos([])
+        }
+      } catch (error) {
+        console.error('Error fetching gallery images:', error)
+        setPhotos([])
+      }
     }
+
+    fetchGalleryImages()
   }, [])
 
   const filteredPhotos = selectedCategory === 'all' 

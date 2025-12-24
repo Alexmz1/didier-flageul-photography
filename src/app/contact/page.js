@@ -19,15 +19,20 @@ export default function Contact() {
   const [returnDate, setReturnDate] = useState('')
 
   useEffect(() => {
-    const vacationStatus = localStorage.getItem("vacation-status")
-    if (vacationStatus) {
-      setIsOnVacation(JSON.parse(vacationStatus))
+    const fetchVacationSettings = async () => {
+      try {
+        const response = await fetch('/api/vacation')
+        if (response.ok) {
+          const data = await response.json()
+          setIsOnVacation(data.isActive)
+          setReturnDate(data.returnDate || '')
+        }
+      } catch (error) {
+        console.error('Error fetching vacation settings:', error)
+      }
     }
-    
-    const savedReturnDate = localStorage.getItem("return-date")
-    if (savedReturnDate) {
-      setReturnDate(savedReturnDate)
-    }
+
+    fetchVacationSettings()
   }, [])
 
   useEffect(() => {

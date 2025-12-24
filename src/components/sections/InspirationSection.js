@@ -113,33 +113,42 @@ export default function GallerySection() {
 
   // Charger les images depuis localStorage et les mélanger
   useEffect(() => {
-    const savedImages = localStorage.getItem('gallery-images')
-    
-    if (savedImages) {
-      const allImages = JSON.parse(savedImages)
-      
-      if (allImages.length > 0) {
-        // Mélanger toutes les images (y compris Hero)
-        const shuffledImages = shuffleArray(allImages)
+    const fetchGalleryImages = async () => {
+      try {
+        const response = await fetch('/api/images')
         
-        // Prendre 15 images (ou moins si pas assez)
-        const selectedImages = shuffledImages.slice(0, 15)
-        
-        // Assigner des tailles aléatoires de façon variée
-        const imagesWithSizes = selectedImages.map((img, index) => ({
-          id: `uploaded-${index}`,
-          src: img.url,
-          alt: img.name || img.category,
-          size: sizes[index % sizes.length] // Distribution variée des tailles
-        }))
-        
-        setGalleryImages(imagesWithSizes)
-      } else {
+        if (response.ok) {
+          const allImages = await response.json()
+          
+          if (allImages.length > 0) {
+            // Mélanger toutes les images (y compris Hero)
+            const shuffledImages = shuffleArray(allImages)
+            
+            // Prendre 15 images (ou moins si pas assez)
+            const selectedImages = shuffledImages.slice(0, 15)
+            
+            // Assigner des tailles aléatoires de façon variée
+            const imagesWithSizes = selectedImages.map((img, index) => ({
+              id: img.id || `uploaded-${index}`,
+              src: img.url,
+              alt: img.name || img.category,
+              size: sizes[index % sizes.length] // Distribution variée des tailles
+            }))
+            
+            setGalleryImages(imagesWithSizes)
+          } else {
+            setGalleryImages(defaultImages)
+          }
+        } else {
+          setGalleryImages(defaultImages)
+        }
+      } catch (error) {
+        console.error('Error fetching gallery images:', error)
         setGalleryImages(defaultImages)
       }
-    } else {
-      setGalleryImages(defaultImages)
     }
+
+    fetchGalleryImages()
   }, [])
 
   const getSizeClasses = (size) => {

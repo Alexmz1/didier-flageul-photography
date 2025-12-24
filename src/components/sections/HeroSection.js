@@ -14,31 +14,32 @@ export default function HeroSection() {
     { src: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80", alt: "Portrait artistique" },
   ]
 
-  // Charger les images Hero depuis localStorage
+  // Charger les images Hero depuis l'API
   useEffect(() => {
-    const savedImages = localStorage.getItem('gallery-images')
-    console.log('📸 localStorage gallery-images:', savedImages)
-    
-    if (savedImages) {
-      const allImages = JSON.parse(savedImages)
-      console.log('📸 Toutes les images:', allImages)
-      
-      const heroImages = allImages
-        .filter(img => {
-          console.log('📸 Vérification image:', img.category, 'Match:', img.category === 'Hero (Page d\'accueil)')
-          return img.category === 'Hero (Page d\'accueil)'
-        })
-        .map(img => ({
-          src: img.url,
-          alt: img.name || 'Image Hero'
-        }))
-      
-      console.log('📸 Images Hero filtrées:', heroImages)
-      setImages(heroImages.length > 0 ? heroImages : defaultImages)
-    } else {
-      console.log('📸 Pas d\'images sauvegardées, utilisation des images par défaut')
-      setImages(defaultImages)
+    const fetchHeroImages = async () => {
+      try {
+        const response = await fetch('/api/images')
+        if (response.ok) {
+          const allImages = await response.json()
+          
+          const heroImages = allImages
+            .filter(img => img.category === 'Hero (Page d\'accueil)')
+            .map(img => ({
+              src: img.url,
+              alt: img.name || 'Image Hero'
+            }))
+          
+          setImages(heroImages.length > 0 ? heroImages : defaultImages)
+        } else {
+          setImages(defaultImages)
+        }
+      } catch (error) {
+        console.error('Error fetching hero images:', error)
+        setImages(defaultImages)
+      }
     }
+
+    fetchHeroImages()
   }, [])
 
   useEffect(() => {
