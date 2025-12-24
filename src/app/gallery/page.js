@@ -185,6 +185,7 @@ export default function Gallery() {
                   <img
                     src={photo.src}
                     alt={photo.title}
+                    loading="lazy"
                     className="w-full h-auto object-cover"
                   />
                 </div>

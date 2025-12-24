@@ -9,6 +9,7 @@ export default function PhotographerSection() {
               <img
                 src="/Didier1.jpeg"
                 alt="Portrait de Didier Flageul"
+                loading="lazy"
                 className="w-full h-[400px] sm:h-[500px] lg:h-[600px] object-contain rounded-lg"
               />
             </div>

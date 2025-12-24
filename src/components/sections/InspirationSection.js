@@ -174,11 +174,12 @@ export default function GallerySection() {
           {galleryImages.map((image) => (
             <div 
               key={image.id}
-              className={`relative group cursor-pointer overflow-hidden rounded-sm ${getSizeClasses(image.size)}`}
+              className={`relative group cursor-pointer overflow-hidden ${getSizeClasses(image.size)}`}
             >
               <img
                 src={image.src}
                 alt={image.alt}
+                loading="lazy"
                 className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-105 group-hover:saturate-110 shadow-md"
               />
               

@@ -69,6 +69,7 @@ function SortableImage({ image, onEdit, onDelete }) {
       <img
         src={image.url}
         alt={image.category}
+        loading="lazy"
         className="w-full h-64 object-cover transition-opacity duration-300 group-hover:opacity-75"
       />
 

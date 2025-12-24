@@ -11,6 +11,7 @@ export default function About() {
                 <img
                   src="/Didier2.jpeg"
                   alt="Didier Flageul au travail"
+                  loading="lazy"
                   className="w-full h-[500px] lg:h-[600px] object-cover"
                 />
               </div>
