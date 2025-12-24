@@ -127,14 +127,19 @@ export default function Contact() {
           {/* Message de congés au-dessus du formulaire */}
           {isOnVacation && (
             <div className="mb-12 bg-amber-100 border-l-4 border-amber-500 text-amber-800 p-6 rounded" role="alert">
-              <div className="text-center">
-                <p className="font-light text-lg">
-                  🌴 Actuellement en congés. Les réservations sont temporairement suspendues.
-                  {returnDate && (
-                    <span className="block mt-2">Retour prévu le {new Date(returnDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}.</span>
-                  )}
-                </p>
-                <p className="text-sm mt-2">Je reviendrai vers vous dès mon retour. Merci de votre compréhension.</p>
+              <div className="flex items-start gap-4">
+                <svg className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div className="text-center flex-1">
+                  <p className="font-light text-lg">
+                    Actuellement en congés. Les réservations sont temporairement suspendues.
+                    {returnDate && (
+                      <span className="block mt-2">Retour prévu le {new Date(returnDate).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}.</span>
+                    )}
+                  </p>
+                  <p className="text-sm mt-2">Je reviendrai vers vous dès mon retour. Merci de votre compréhension.</p>
+                </div>
               </div>
             </div>
           )}

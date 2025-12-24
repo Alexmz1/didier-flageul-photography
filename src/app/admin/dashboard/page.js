@@ -352,14 +352,98 @@ export default function AdminDashboard() {
         )}
         {/* En-tête */}
         <div className="p-8 mb-0 max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div className="text-center md:text-left">
-              <h1 className="text-4xl md:text-5xl font-light text-slate-800 mb-3" 
-                  style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
-                Dashboard Admin
-              </h1>
-              <div className="w-24 h-px bg-slate-300 mx-auto md:mx-0"></div>
+          <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+            <div className="flex flex-col gap-6">
+              <div className="text-center md:text-left">
+                <h1 className="text-4xl md:text-5xl font-light text-slate-800 mb-3" 
+                    style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+                  Dashboard Admin
+                </h1>
+                <div className="w-24 h-px bg-slate-300 mx-auto md:mx-0"></div>
+              </div>
+              
+              {/* Checkbox Mode Congés */}
+              <div className="flex flex-col items-start gap-3">
+                <label htmlFor="vacation-mode" className="flex items-center cursor-pointer group">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      id="vacation-mode"
+                      checked={isOnVacation}
+                      onChange={handleVacationToggle}
+                      className="sr-only"
+                    />
+                    <div 
+                      className={`w-6 h-6 border-2 rounded-md flex items-center justify-center transition-all ${
+                        isOnVacation
+                          ? 'border-slate-800 bg-slate-800' 
+                          : 'border-slate-300 group-hover:border-slate-400'
+                      }`}
+                    >
+                      {isOnVacation && (
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                  <span className="ml-3 text-sm font-light text-slate-700">
+                    Mode congés
+                  </span>
+                </label>
+                
+                {isOnVacation && (
+                  <div className="w-72">
+                    <div className="relative">
+                      <div className="text-xs font-light text-slate-600 mb-2">
+                        Date de retour :
+                      </div>
+                      <div
+                        className="w-full px-0 py-2 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
+                        onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className={`text-sm ${returnDate ? 'text-slate-700' : 'text-slate-400'}`}>
+                            {returnDate
+                              ? new Date(returnDate + 'T00:00:00').toLocaleDateString('fr-FR', {
+                                  day: 'numeric',
+                                  month: 'long',
+                                  year: 'numeric'
+                                })
+                              : "Sélectionner une date"}
+                          </span>
+                          <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {isCalendarOpen && (
+                        <>
+                          <div className="absolute top-full left-0 z-50 mt-2 bg-white shadow-lg border border-slate-300 rounded-md p-4">
+                            <calendar-date 
+                              class="cally bg-white"
+                              value={returnDate}
+                              style={{ color: '#1e293b', fontWeight: 400 }}
+                            >
+                              <svg aria-label="Previous" className="fill-current size-4 text-slate-600" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+                              </svg>
+                              <svg aria-label="Next" className="fill-current size-4 text-slate-600" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+                              </svg>
+                              <calendar-month></calendar-month>
+                            </calendar-date>
+                          </div>
+                          <div className="fixed inset-0 z-40" onClick={() => setIsCalendarOpen(false)} />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
+            
             <button 
               onClick={() => signOut({ callbackUrl: "/admin" })} 
               className="border border-slate-300 text-slate-700 hover:bg-slate-800 hover:text-white hover:border-slate-800 font-light px-8 py-3 transition-colors flex items-center gap-2 uppercase tracking-wider text-sm"
@@ -369,89 +453,6 @@ export default function AdminDashboard() {
               </svg>
               Déconnexion
             </button>
-          </div>
-          
-          {/* Checkbox Mode Congés */}
-          <div className="mt-8 pt-8 border-t border-slate-200">
-            <div className="flex flex-col items-center gap-4">
-              <label htmlFor="vacation-mode" className="flex items-center cursor-pointer group">
-                <div className="relative">
-                  <input
-                    type="checkbox"
-                    id="vacation-mode"
-                    checked={isOnVacation}
-                    onChange={handleVacationToggle}
-                    className="sr-only"
-                  />
-                  <div 
-                    className={`w-6 h-6 border-2 rounded-md flex items-center justify-center transition-all ${
-                      isOnVacation
-                        ? 'border-slate-800 bg-slate-800' 
-                        : 'border-slate-300 group-hover:border-slate-400'
-                    }`}
-                  >
-                    {isOnVacation && (
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </div>
-                </div>
-                <span className="ml-3 text-sm font-light text-slate-700">
-                  Activer le mode congés (affiche un message sur la page contact)
-                </span>
-              </label>
-              
-              {isOnVacation && (
-                <div className="w-full max-w-md">
-                  <div className="relative">
-                    <div className="text-sm font-light text-slate-700 mb-2">
-                      Date de retour :
-                    </div>
-                    <div
-                      className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
-                      onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className={returnDate ? 'text-slate-700' : 'text-slate-400'}>
-                          {returnDate
-                            ? new Date(returnDate + 'T00:00:00').toLocaleDateString('fr-FR', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                              })
-                            : "Sélectionner une date"}
-                        </span>
-                        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    </div>
-
-                    {isCalendarOpen && (
-                      <>
-                        <div className="absolute top-full left-0 z-50 mt-2 bg-white shadow-lg border border-slate-300 rounded-md p-4">
-                          <calendar-date 
-                            class="cally bg-white"
-                            value={returnDate}
-                            style={{ color: '#1e293b', fontWeight: 400 }}
-                          >
-                            <svg aria-label="Previous" className="fill-current size-4 text-slate-600" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                              <path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
-                            </svg>
-                            <svg aria-label="Next" className="fill-current size-4 text-slate-600" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                              <path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
-                            </svg>
-                            <calendar-month></calendar-month>
-                          </calendar-date>
-                        </div>
-                        <div className="fixed inset-0 z-40" onClick={() => setIsCalendarOpen(false)} />
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
         </div>
 
