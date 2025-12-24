@@ -137,20 +137,27 @@ export default function AdminDashboard() {
   };
 
   // Gérer le drag & drop
-  const handleDragEnd = (event) => {
+  const handleDragEnd = async (event) => {
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      setImages((items) => {
-        const oldIndex = items.findIndex((item) => item.url === active.id);
-        const newIndex = items.findIndex((item) => item.url === over.id);
-        
-        const newItems = arrayMove(items, oldIndex, newIndex);
-        localStorage.setItem("gallery-images", JSON.stringify(newItems));
-        return newItems;
-      });
+      const oldIndex = images.findIndex((item) => item.url === active.id);
+      const newIndex = images.findIndex((item) => item.url === over.id);
       
-      showNotification('Ordre des images modifié', 'success');
+      const newItems = arrayMove(images, oldIndex, newIndex);
+      setImages(newItems);
+      
+      // Sauvegarder l'ordre dans la BDD
+      try {
+        await fetch('/api/images', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ images: newItems })
+        });
+        showNotification('Ordre des images modifié', 'success');
+      } catch (error) {
+        console.error('Error saving order:', error);
+      }
     }
   };
 
@@ -160,24 +167,22 @@ export default function AdminDashboard() {
     }
   }, [status, router]);
 
+  // Charger les images depuis l'API
   useEffect(() => {
-    // Charger les images depuis le localStorage
-    const savedImages = localStorage.getItem("gallery-images");
-    if (savedImages) {
-      setImages(JSON.parse(savedImages));
-    }
-    
-    // Charger le statut de congés
-    const vacationStatus = localStorage.getItem("vacation-status");
-    if (vacationStatus) {
-      setIsOnVacation(JSON.parse(vacationStatus));
-    }
-    
-    // Charger la date de retour
-    const savedReturnDate = localStorage.getItem("return-date");
-    if (savedReturnDate) {
-      setReturnDate(savedReturnDate);
-    }
+    const fetchImages = async () => {
+      try {
+        const response = await fetch('/api/images');
+        if (response.ok) {
+          const data = await response.json();
+          setImages(data);
+        }
+      } catch (error) {
+        console.error('Error fetching images:', error);
+        showNotification('Erreur lors du chargement des images', 'error');
+      }
+    };
+
+    fetchImages();
     
     // Initialiser le compteur d'images visibles pour chaque catégorie
     const initialVisible = {};
@@ -185,6 +190,24 @@ export default function AdminDashboard() {
       initialVisible[cat] = IMAGES_PER_PAGE;
     });
     setVisibleImagesCount(initialVisible);
+  }, []);
+
+  // Charger les paramètres de vacances depuis l'API
+  useEffect(() => {
+    const fetchVacationSettings = async () => {
+      try {
+        const response = await fetch('/api/vacation');
+        if (response.ok) {
+          const data = await response.json();
+          setIsOnVacation(data.isActive);
+          setReturnDate(data.returnDate || '');
+        }
+      } catch (error) {
+        console.error('Error fetching vacation settings:', error);
+      }
+    };
+
+    fetchVacationSettings();
   }, []);
 
   useEffect(() => {
@@ -212,9 +235,18 @@ export default function AdminDashboard() {
     };
   }, [isCalendarOpen]);
 
-  const saveImages = (newImages) => {
+  const saveImages = async (newImages) => {
     setImages(newImages);
-    localStorage.setItem("gallery-images", JSON.stringify(newImages));
+    // Mettre à jour l'ordre dans la BDD
+    try {
+      await fetch('/api/images', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images: newImages })
+      });
+    } catch (error) {
+      console.error('Error saving images order:', error);
+    }
   };
 
   const loadMoreImages = (category) => {
@@ -224,40 +256,85 @@ export default function AdminDashboard() {
     }));
   };
 
-  const handleVacationToggle = () => {
+  const handleVacationToggle = async () => {
     const newStatus = !isOnVacation;
     setIsOnVacation(newStatus);
-    localStorage.setItem("vacation-status", JSON.stringify(newStatus));
     
     // Si on désactive le mode congés, effacer la date de retour
+    const newReturnDate = newStatus ? returnDate : null;
     if (!newStatus) {
       setReturnDate('');
-      localStorage.removeItem("return-date");
     }
     
-    showNotification(
-      newStatus ? 'Mode congés activé' : 'Mode congés désactivé',
-      'success'
-    );
+    // Sauvegarder dans la BDD
+    try {
+      await fetch('/api/vacation', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          isActive: newStatus, 
+          returnDate: newReturnDate 
+        })
+      });
+      
+      showNotification(
+        newStatus ? 'Mode congés activé' : 'Mode congés désactivé',
+        'success'
+      );
+    } catch (error) {
+      console.error('Error updating vacation settings:', error);
+      showNotification('Erreur lors de la mise à jour', 'error');
+    }
   };
 
-  const handleReturnDateChange = (date) => {
+  const handleReturnDateChange = async (date) => {
     setReturnDate(date);
-    localStorage.setItem("return-date", date);
+    
+    // Sauvegarder dans la BDD
+    try {
+      await fetch('/api/vacation', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          isActive: isOnVacation, 
+          returnDate: date 
+        })
+      });
+    } catch (error) {
+      console.error('Error updating return date:', error);
+    }
   };
 
-  const handleImagesChange = (newImages) => {
+  const handleImagesChange = async (newImages) => {
     // La vérification est maintenant faite dans ImageUploader avant l'upload
-    // Ajouter la catégorie aux nouvelles images
-    const imagesWithCategory = newImages.map(img => ({
-      ...img,
-      category: selectedCategory,
-      uploadedAt: img.uploadedAt || new Date().toISOString(),
-    }));
-    
-    // Fusionner avec les images existantes au lieu de les remplacer
-    const allImages = [...images, ...imagesWithCategory];
-    saveImages(allImages);
+    // Ajouter chaque image à la BDD
+    try {
+      const addedImages = [];
+      for (const img of newImages) {
+        const response = await fetch('/api/images', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: img.url,
+            key: img.key,
+            name: img.name,
+            category: selectedCategory
+          })
+        });
+        
+        if (response.ok) {
+          const savedImage = await response.json();
+          addedImages.push(savedImage);
+        }
+      }
+      
+      // Mettre à jour l'état local
+      setImages([...images, ...addedImages]);
+      showNotification('Image(s) ajoutée(s) avec succès !', 'success');
+    } catch (error) {
+      console.error('Error saving images:', error);
+      showNotification('Erreur lors de l\'ajout des images', 'error');
+    }
   };
 
   const handleEditImage = (imageUrl) => {
@@ -270,17 +347,49 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleReplaceImage = (newImage) => {
+  const handleReplaceImage = async (newImage) => {
     if (!editingImage) return;
 
-    // Remplacer l'ancienne image par la nouvelle
-    const updatedImages = images.map(img => 
-      img.url === editingImage.url 
-        ? { ...newImage, category: editingImage.category, uploadedAt: new Date().toISOString() }
-        : img
-    );
-    saveImages(updatedImages);
-    setEditingImage(null);
+    try {
+      // Supprimer l'ancienne image d'UploadThing
+      await fetch('/api/delete-image', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: editingImage.key }),
+      });
+
+      // Supprimer de la BDD
+      await fetch(`/api/images?id=${editingImage.id}`, {
+        method: 'DELETE'
+      });
+
+      // Ajouter la nouvelle image
+      const response = await fetch('/api/images', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: newImage.url,
+          key: newImage.key,
+          name: newImage.name,
+          category: editingImage.category
+        })
+      });
+
+      if (response.ok) {
+        const savedImage = await response.json();
+        
+        // Mettre à jour l'état local
+        const updatedImages = images.map(img => 
+          img.id === editingImage.id ? savedImage : img
+        );
+        setImages(updatedImages);
+        setEditingImage(null);
+        showNotification('Image remplacée avec succès !', 'success');
+      }
+    } catch (error) {
+      console.error('Error replacing image:', error);
+      showNotification('Erreur lors du remplacement de l\'image', 'error');
+    }
   };
 
   const handleCancelEdit = () => {
@@ -302,7 +411,7 @@ export default function AdminDashboard() {
 
     try {
       // Supprimer l'image d'UploadThing
-      const response = await fetch('/api/delete-image', {
+      const deleteResponse = await fetch('/api/delete-image', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -310,14 +419,19 @@ export default function AdminDashboard() {
         body: JSON.stringify({ key: imageToDelete.key }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      if (!deleteResponse.ok) {
+        const errorData = await deleteResponse.json();
         throw new Error(errorData.error || 'Erreur lors de la suppression');
       }
 
-      // Supprimer l'image de la liste
+      // Supprimer de la BDD
+      await fetch(`/api/images?id=${imageToDelete.id}`, {
+        method: 'DELETE'
+      });
+
+      // Supprimer de l'état local
       const updatedImages = images.filter((img) => img.url !== imageUrl);
-      saveImages(updatedImages);
+      setImages(updatedImages);
 
       showNotification('Image supprimée avec succès !', 'success');
     } catch (error) {
