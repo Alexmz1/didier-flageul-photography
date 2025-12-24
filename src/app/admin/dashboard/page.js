@@ -122,6 +122,8 @@ export default function AdminDashboard() {
   const [isOnVacation, setIsOnVacation] = useState(false);
   const [returnDate, setReturnDate] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('gallery'); // 'gallery' ou 'stats'
+  const [stats, setStats] = useState(null);
   
   const IMAGES_PER_PAGE = 8; // 2 lignes de 4 images
 
@@ -211,6 +213,25 @@ export default function AdminDashboard() {
 
     fetchVacationSettings();
   }, []);
+
+  // Charger les statistiques
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/stats');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+
+    if (activeSection === 'stats') {
+      fetchStats();
+    }
+  }, [activeSection]);
 
   useEffect(() => {
     if (!isCalendarOpen) return;
@@ -618,7 +639,36 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Onglets Navigation */}
+        <div className="bg-white border-b border-slate-200">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex gap-8">
+              <button
+                onClick={() => setActiveSection('gallery')}
+                className={`px-6 py-4 font-light transition-all border-b-2 ${
+                  activeSection === 'gallery'
+                    ? 'border-slate-800 text-slate-800'
+                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                Galerie
+              </button>
+              <button
+                onClick={() => setActiveSection('stats')}
+                className={`px-6 py-4 font-light transition-all border-b-2 ${
+                  activeSection === 'stats'
+                    ? 'border-slate-800 text-slate-800'
+                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                Statistiques
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Section Upload */}
+        {activeSection === 'gallery' && (
         <div className="bg-gray-50 py-16 px-6">
           <div className="max-w-7xl mx-auto">
           {editingImage ? (
@@ -783,8 +833,10 @@ export default function AdminDashboard() {
           )}
         </div>
         </div>
+        )}
 
         {/* Section Galerie */}
+        {activeSection === 'gallery' && (
         <div className="bg-white py-16 px-6">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl font-light text-slate-800 mb-8 text-center" 
@@ -907,6 +959,95 @@ export default function AdminDashboard() {
             )}
           </div>
         </div>
+        )}
+
+        {/* Section Statistiques */}
+        {activeSection === 'stats' && (
+        <div className="bg-gray-50 py-16 px-6">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-light text-slate-800 mb-8 text-center" 
+                style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+              Statistiques d'utilisation
+            </h2>
+            <div className="w-16 h-px bg-slate-300 mx-auto mb-12"></div>
+            
+            {stats ? (
+              <div className="space-y-8">
+                {/* UploadThing */}
+                <div className="bg-white p-8 shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-xl font-light text-slate-800 mb-1">UploadThing (Stockage Images)</h3>
+                      <p className="text-sm text-slate-600 font-light">Plan gratuit : 2 GB</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-light text-slate-800">{stats.uploadThing.percentage}%</p>
+                      <p className="text-sm text-slate-600 font-light">{stats.uploadThing.used} MB / {stats.uploadThing.limit} MB</p>
+                    </div>
+                  </div>
+                  <div className="w-full bg-slate-200 h-4 overflow-hidden">
+                    <div 
+                      className={`h-full transition-all duration-500 ${
+                        stats.uploadThing.percentage > 80 ? 'bg-red-500' : 
+                        stats.uploadThing.percentage > 60 ? 'bg-amber-500' : 
+                        'bg-green-500'
+                      }`}
+                      style={{ width: `${Math.min(stats.uploadThing.percentage, 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Neon PostgreSQL */}
+                <div className="bg-white p-8 shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-xl font-light text-slate-800 mb-1">Neon PostgreSQL (Base de données)</h3>
+                      <p className="text-sm text-slate-600 font-light">Plan gratuit : 512 MB</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-light text-slate-800">{stats.neon.percentage}%</p>
+                      <p className="text-sm text-slate-600 font-light">{stats.neon.used} MB / {stats.neon.limit} MB</p>
+                    </div>
+                  </div>
+                  <div className="w-full bg-slate-200 h-4 overflow-hidden">
+                    <div 
+                      className={`h-full transition-all duration-500 ${
+                        stats.neon.percentage > 80 ? 'bg-red-500' : 
+                        stats.neon.percentage > 60 ? 'bg-amber-500' : 
+                        'bg-green-500'
+                      }`}
+                      style={{ width: `${Math.min(stats.neon.percentage, 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Statistiques images */}
+                <div className="bg-white p-8 shadow-sm">
+                  <h3 className="text-xl font-light text-slate-800 mb-4">Images</h3>
+                  <div className="grid grid-cols-3 gap-6 text-center">
+                    <div>
+                      <p className="text-3xl font-light text-slate-800 mb-1">{stats.images.total}</p>
+                      <p className="text-sm text-slate-600 font-light">Total</p>
+                    </div>
+                    <div>
+                      <p className="text-3xl font-light text-slate-800 mb-1">{stats.images.hero}</p>
+                      <p className="text-sm text-slate-600 font-light">Carrousel</p>
+                    </div>
+                    <div>
+                      <p className="text-3xl font-light text-slate-800 mb-1">{stats.images.other}</p>
+                      <p className="text-sm text-slate-600 font-light">Galerie</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <span className="loading loading-spinner loading-lg"></span>
+              </div>
+            )}
+          </div>
+        </div>
+        )}
       </div>
     </div>
   );
