@@ -34,7 +34,7 @@ export default function PhotographerSection() {
               </p>
               
               <p className="text-lg font-light">
-                Inspiré par les grands studios comme Harcourt, je mets la lumière et l’émotion au cœur de chaque image pour sublimer vos mariages, portraits et books professionnels.
+                Inspiré par les grands studios, je mets la lumière et l’émotion au cœur de chaque image pour sublimer vos mariages, portraits et books professionnels.
               </p>
               
               <p className="text-lg font-light">
