@@ -41,6 +41,7 @@ export default function HeroSection() {
     }
 
     fetchHeroImages()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

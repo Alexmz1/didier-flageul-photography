@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 export default function PhotographerSection() {
   return (
     <section className="py-32 bg-white">
@@ -6,9 +8,11 @@ export default function PhotographerSection() {
           {/* Image du photographe */}
           <div className="order-2 lg:order-1">
             <div className="relative">
-              <img
+              <Image
                 src="/Didier1.jpeg"
                 alt="Portrait de Didier Flageul"
+                width={800}
+                height={600}
                 loading="lazy"
                 className="w-full h-[400px] sm:h-[500px] lg:h-[600px] object-contain rounded-lg"
               />

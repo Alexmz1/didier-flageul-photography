@@ -150,6 +150,7 @@ export default function GallerySection() {
     }
 
     fetchGalleryImages()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const getSizeClasses = (size) => {
@@ -186,11 +187,12 @@ export default function GallerySection() {
               key={image.id}
               className={`relative group cursor-pointer overflow-hidden ${getSizeClasses(image.size)}`}
             >
-              <img
+              <Image
                 src={image.src}
                 alt={image.alt}
+                fill
                 loading="lazy"
-                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-105 group-hover:saturate-110 shadow-md"
+                className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-105 group-hover:saturate-110 shadow-md"
               />
               
               {/* Overlay artistique au hover */}

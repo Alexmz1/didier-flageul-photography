@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 export default function Services() {
   const services = [
     {
@@ -79,9 +81,11 @@ export default function Services() {
               <div key={index} id={service.id} className={`grid lg:grid-cols-2 gap-8 lg:gap-16 items-center scroll-mt-48 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
                 {/* Image */}
                 <div className={`${index % 2 === 1 ? 'lg:order-2' : ''}`}>
-                  <img
+                  <Image
                     src={service.image}
                     alt={service.title}
+                    width={800}
+                    height={500}
                     loading="lazy"
                     className="w-full h-[400px] lg:h-[500px] object-cover"
                   />
