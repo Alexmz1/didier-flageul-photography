@@ -18,15 +18,15 @@ export default function ReservationSection() {
 
             <div className="space-y-6 text-slate-700 leading-relaxed">
               <p className="text-lg font-light">
-                Si mon style photographique vous plaît, n'hésitez pas à me contacter pour obtenir 
-                plus d'informations ou un devis personnalisé.
+                Si mon style photographique vous plaît, n&apos;hésitez pas à me contacter pour obtenir 
+                plus d&apos;informations ou un devis personnalisé.
               </p>
               <p className="text-lg font-light">
                 Je me déplace dans toute la France pour immortaliser vos moments précieux 
-                et serais ravi d'échanger avec vous sur votre projet.
+                et serais ravi d&apos;échanger avec vous sur votre projet.
               </p>
               <p className="text-lg font-light">
-                J'ai hâte de créer avec vous des images uniques qui racontent votre histoire.
+                J&apos;ai hâte de créer avec vous des images uniques qui racontent votre histoire.
               </p>
             </div>
 

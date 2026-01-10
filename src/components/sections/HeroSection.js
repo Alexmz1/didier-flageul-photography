@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 export default function HeroSection() {
   const [currentImage, setCurrentImage] = useState(0)
@@ -67,10 +68,12 @@ export default function HeroSection() {
               index === currentImage ? 'opacity-100 scale-105' : 'opacity-0 scale-100'
             }`}
           >
-            <img
+            <Image
               src={image.src}
               alt={image.alt}
-              className="w-full h-full object-cover object-center filter brightness-75 contrast-110"
+              fill
+              priority={index === 0}
+              className="object-cover object-center filter brightness-75 contrast-110"
             />
           </div>
         ))}
