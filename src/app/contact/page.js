@@ -230,8 +230,8 @@ export default function Contact() {
                 </div>
               </div>
 
-            {/* Formulaire de contact */}
-            <div className="bg-gray-50 p-8 lg:p-12">
+            {/* Formulaire de contact - Désactivé temporairement */}
+            {/* <div className="bg-gray-50 p-8 lg:p-12">
               <h3 className="text-2xl font-light text-slate-800 mb-8 text-center">
                 Envoyez-moi un message
               </h3>
@@ -278,7 +278,6 @@ export default function Contact() {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-                  {/* Champ Date personnalisé */}
                   <div className="relative">
                     <div
                       className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
@@ -322,7 +321,7 @@ export default function Contact() {
                     )}
                   </div>
 
-                  {/* Select personnalisé */}
+                  {/* Select personnalisé 
                   <div className="relative">
                     <div
                       className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
@@ -388,7 +387,7 @@ export default function Contact() {
                   </button>
                 </div>
               </form>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
