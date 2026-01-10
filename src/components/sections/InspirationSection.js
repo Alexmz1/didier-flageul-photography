@@ -1,5 +1,12 @@
+"use client"
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
+
 export default function GallerySection() {
-  const galleryImages = [
+  const [galleryImages, setGalleryImages] = useState([])
+  
+  // Images par défaut si aucune image n'est uploadée
+  const defaultImages = [
     { 
       id: 1, 
       src: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80", 
@@ -92,6 +99,59 @@ export default function GallerySection() {
     }
   ]
 
+  // Tailles disponibles pour la mosaïque
+  const sizes = ['large', 'wide', 'tall', 'medium', 'small']
+
+  // Fonction pour mélanger un tableau (Fisher-Yates shuffle)
+  const shuffleArray = (array) => {
+    const newArray = [...array]
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]]
+    }
+    return newArray
+  }
+
+  // Charger les images depuis localStorage et les mélanger
+  useEffect(() => {
+    const fetchGalleryImages = async () => {
+      try {
+        const response = await fetch('/api/images')
+        
+        if (response.ok) {
+          const allImages = await response.json()
+          
+          if (allImages.length > 0) {
+            // Mélanger toutes les images (y compris Hero)
+            const shuffledImages = shuffleArray(allImages)
+            
+            // Prendre 15 images (ou moins si pas assez)
+            const selectedImages = shuffledImages.slice(0, 15)
+            
+            // Assigner des tailles aléatoires de façon variée
+            const imagesWithSizes = selectedImages.map((img, index) => ({
+              id: img.id || `uploaded-${index}`,
+              src: img.url,
+              alt: img.name || img.category,
+              size: sizes[index % sizes.length] // Distribution variée des tailles
+            }))
+            
+            setGalleryImages(imagesWithSizes)
+          } else {
+            setGalleryImages(defaultImages)
+          }
+        } else {
+          setGalleryImages(defaultImages)
+        }
+      } catch (error) {
+        console.error('Error fetching gallery images:', error)
+        setGalleryImages(defaultImages)
+      }
+    }
+
+    fetchGalleryImages()
+  }, [])
+
   const getSizeClasses = (size) => {
     switch (size) {
       case 'large': return 'col-span-3 row-span-4'
@@ -109,7 +169,7 @@ export default function GallerySection() {
         {/* Titre de section - plus compact */}
         <div className="text-center mb-8 px-4">
           <h2 className="text-3xl md:text-4xl font-light text-slate-800 mb-4" 
-              style={{ fontFamily: "'Dancing Script', 'Brush Script MT', cursive" }}>
+              style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
             Des images douces et lumineuses
           </h2>
           <div className="w-16 h-px bg-slate-300 mx-auto mb-4"></div>
@@ -124,11 +184,12 @@ export default function GallerySection() {
           {galleryImages.map((image) => (
             <div 
               key={image.id}
-              className={`relative group cursor-pointer overflow-hidden rounded-sm ${getSizeClasses(image.size)}`}
+              className={`relative group cursor-pointer overflow-hidden ${getSizeClasses(image.size)}`}
             >
               <img
                 src={image.src}
                 alt={image.alt}
+                loading="lazy"
                 className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-105 group-hover:saturate-110 shadow-md"
               />
               
@@ -139,10 +200,13 @@ export default function GallerySection() {
         </div>
 
         {/* Texte en bas de section */}
-        <div className="text-center mt-8 px-4">
+        <div className="text-center mt-8 px-4 space-y-6">
           <p className="text-sm text-slate-500 italic">
             Chaque détail compte pour créer des photographies élégantes et intemporelles
           </p>
+          <a href="/gallery" className="inline-block border border-slate-800 text-slate-800 px-8 py-3 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-800 hover:text-white transition-all duration-500">
+            Voir toute la galerie
+          </a>
         </div>
       </div>
     </section>

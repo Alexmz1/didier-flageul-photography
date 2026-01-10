@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 export default function ShootingSection() {
   const shootingTypes = [
     {
@@ -5,28 +7,32 @@ export default function ShootingSection() {
       description: "Un reportage élégant et lumineux de votre jour J",
       image: "https://images.unsplash.com/photo-1606800052052-a08af7148866?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       duration: "Journée complète",
-      price: "À partir de 2500€"
+      price: "À partir de 2500€",
+      link: "/services#mariage"
     },
     {
       title: "Séance Couple", 
       description: "Immortaliser votre amour avec poésie et romantisme",
       image: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       duration: "2h",
-      price: "À partir de 350€"
+      price: "À partir de 350€",
+      link: "/services#seance-couple"
     },
     {
       title: "Portrait Individuel",
       description: "Révéler votre personnalité à travers des portraits authentiques",
       image: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       duration: "1h30",
-      price: "À partir de 280€"
+      price: "À partir de 280€",
+      link: "/services#portrait-individuel"
     },
     {
       title: "Famille & Maternité",
       description: "Capturer les liens précieux et les moments tendres",
       image: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
       duration: "1h30",
-      price: "À partir de 320€"
+      price: "À partir de 320€",
+      link: "/services#famille-maternite"
     }
   ]
 
@@ -36,7 +42,7 @@ export default function ShootingSection() {
         {/* Titre de section */}
         <div className="text-center mb-20">
           <h2 className="text-4xl md:text-5xl font-light text-slate-800 mb-8" 
-              style={{ fontFamily: "'Dancing Script', 'Brush Script MT', cursive" }}>
+              style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
             Mes prestations
           </h2>
           <div className="w-24 h-px bg-slate-300 mx-auto mb-8"></div>
@@ -55,9 +61,12 @@ export default function ShootingSection() {
             >
               {/* Image */}
               <div className="relative overflow-hidden h-80">
-                <img
+                <Image
                   src={shooting.image}
                   alt={shooting.title}
+                  width={400}
+                  height={320}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -85,9 +94,12 @@ export default function ShootingSection() {
                 </div>
                 
                 <div className="pt-6">
-                  <button className="text-xs uppercase tracking-[0.15em] text-slate-800 border-b border-slate-800 pb-1 hover:text-slate-600 hover:border-slate-600 transition-colors duration-300">
+                  <a 
+                    href={shooting.link}
+                    className="text-xs uppercase tracking-[0.15em] text-slate-800 border-b border-slate-800 pb-1 hover:text-slate-600 hover:border-slate-600 transition-colors duration-300"
+                  >
                     En savoir plus
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -96,9 +108,9 @@ export default function ShootingSection() {
 
         {/* CTA bas de section */}
         <div className="text-center mt-20">
-          <button className="border border-slate-800 text-slate-800 px-12 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-800 hover:text-white transition-all duration-500">
-            Voir tous les tarifs
-          </button>
+          <a href="/services" className="inline-block border border-slate-800 text-slate-800 px-12 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-800 hover:text-white transition-all duration-500">
+            Voir tous les services
+          </a>
         </div>
       </div>
     </section>
