@@ -4,34 +4,34 @@ export default function ShootingSection() {
   const shootingTypes = [
     {
       title: "Mariage",
-      description: "Un reportage élégant et lumineux de votre jour J",
+      description: "Deux offres : civil/religieux ou pack complet.",
       image: "https://images.unsplash.com/photo-1606800052052-a08af7148866?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      duration: "Journée complète",
-      price: "À partir de 2500€",
+      duration: "Selon formule",
+      price: "À partir de 750€ (civil/religieux) / 1500€ (pack complet)",
       link: "/services#mariage"
     },
     {
       title: "Séance Couple", 
-      description: "Immortaliser votre amour avec poésie et romantisme",
+      description: "Séance photo en duo, lieu au choix du couple.",
       image: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      duration: "2h",
-      price: "À partir de 350€",
+      duration: "À partir de 1h",
+      price: "200€ / h",
       link: "/services#seance-couple"
     },
     {
       title: "Portrait Individuel",
-      description: "Révéler votre personnalité à travers des portraits authentiques",
+      description: "Portrait artistique ou corporate, pour book ou réseaux sociaux.",
       image: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      duration: "1h30",
-      price: "À partir de 280€",
+      duration: "À partir de 1h",
+      price: "175€ / h (1 photo 20x30) | Corporate : 200€ / h",
       link: "/services#portrait-individuel"
     },
     {
       title: "Famille & Maternité",
-      description: "Capturer les liens précieux et les moments tendres",
+      description: "Séance sur devis uniquement.",
       image: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      duration: "1h30",
-      price: "À partir de 320€",
+      duration: "Sur devis",
+      price: "Sur devis",
       link: "/services#famille-maternite"
     }
   ]
@@ -57,7 +57,7 @@ export default function ShootingSection() {
           {shootingTypes.map((shooting, index) => (
             <div 
               key={index}
-              className="group cursor-pointer bg-white border-r border-slate-200 last:border-r-0 hover:bg-gray-50 transition-all duration-500"
+              className="group cursor-pointer bg-white border-r border-slate-200 last:border-r-0 hover:bg-gray-50 transition-all duration-500 flex flex-col h-full"
             >
               {/* Image */}
               <div className="relative overflow-hidden h-80">
@@ -71,19 +71,15 @@ export default function ShootingSection() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
-              
               {/* Contenu */}
-              <div className="p-8 text-center space-y-4">
+              <div className="p-8 text-center space-y-4 flex flex-col flex-1">
                 <h3 className="text-xl font-light text-slate-800 tracking-wide">
                   {shooting.title}
                 </h3>
-                
                 <div className="w-12 h-px bg-slate-300 mx-auto"></div>
-                
                 <p className="text-sm text-slate-600 leading-relaxed font-light">
                   {shooting.description}
                 </p>
-                
                 <div className="space-y-2 pt-4">
                   <p className="text-xs uppercase tracking-wider text-slate-500">
                     Durée : {shooting.duration}
@@ -92,8 +88,7 @@ export default function ShootingSection() {
                     {shooting.price}
                   </p>
                 </div>
-                
-                <div className="pt-6">
+                <div className="pt-6 mt-auto">
                   <a 
                     href={shooting.link}
                     className="text-xs uppercase tracking-[0.15em] text-slate-800 border-b border-slate-800 pb-1 hover:text-slate-600 hover:border-slate-600 transition-colors duration-300"

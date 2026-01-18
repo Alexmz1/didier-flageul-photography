@@ -4,54 +4,67 @@ export default function Services() {
   const services = [
     {
       id: "mariage",
-      title: "Mariage",
-      description: "Immortalisez votre journée unique.",
+      title: "Mariages",
+      description: "Séparez les offres pour mieux choisir selon votre projet.",
       image: "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      price: "À partir de 2500€",
+      price: "",
       features: [
-        "Séance couple romantique",
-        "Photos retouchées",
-        "Clé USB personnalisée",
-        "Délai de livraison : 6 semaines"
+        <>
+          <div className="mb-2 font-semibold text-slate-800 text-lg">À partir de 750€</div>
+          <ul className="mb-4 list-disc ml-6 text-slate-600 text-base">
+            <li>Mariage civil / religieux</li>
+          </ul>
+          <div className="mb-2 font-semibold text-slate-800 text-lg">À partir de 1500€</div>
+          <ul className="list-disc ml-6 text-slate-600 text-base">
+            <li>Préparation mariée</li>
+            <li>Photos couple, parc, mairie, lieu de culte</li>
+            <li>Vin d’honneur, soirée, gâteau/pièce montée</li>
+          </ul>
+        </>
       ]
     },
     {
       id: "seance-couple",
-      title: "Séance Couple",
-      description: "Capturez la complicité et l'amour dans un cadre naturel et poétique.",
+      title: "Couple",
+      description: "Séance photo en duo, lieu au choix du couple.",
       image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      price: "À partir de 450€",
+      price: "",
       features: [
-        "1h30 de séance photo",
-        "Conseils stylisme",
-        "Photos retouchées",
-        "Délai de livraison : 2 semaines"
+        <>
+          <div className="mb-2 font-semibold text-slate-800 text-lg">200€ / h</div>
+          <ul className="mb-4 list-disc ml-6 text-slate-600 text-base">
+            <li>Délai : 2 semaines</li>
+            <li>Lieu choisi par le couple</li>
+          </ul>
+        </>
       ]
     },
     {
       id: "portrait-individuel",
       title: "Portrait Individuel",
-      description: "Révélez votre personnalité à travers des portraits artistiques et authentiques, pour un book ou simplement vos réseaux sociaux.",
+      description: "Portrait artistique ou corporate, pour book ou réseaux sociaux.",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      price: "À partir de 350€",
+      price: "",
       features: [
-        "1h de séance photo",
-        "Plusieurs tenues possibles",
-        "Photos retouchées",
-        "Délai de livraison : 2 semaines"
+        <>
+          <div className="mb-2 font-semibold text-slate-800 text-lg">175€ / h (1 photo 20x30 développée)</div>
+          <div className="mb-2 font-semibold text-slate-800 text-lg">Corporate : 200€ / h</div>
+          <ul className="mb-4 list-disc ml-6 text-slate-600 text-base">
+            <li>Délai : 2 semaines</li>
+          </ul>
+        </>
       ]
     },
     {
       id: "famille-maternite",
       title: "Famille & Maternité",
-      description: "Immortalisez les moments précieux de votre famille avec tendresse.",
+      description: "Séance sur devis uniquement.",
       image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      price: "À partir de 400€",
+      price: "",
       features: [
-        "1h30 de séance photo",
-        "En extérieur ou à domicile",
-        "Photos retouchées",
-        "Délai de livraison : 2 semaines"
+        <>
+          <div className="mb-2 font-semibold text-slate-800 text-lg">Sur devis</div>
+        </>
       ]
     }
   ]
@@ -105,17 +118,12 @@ export default function Services() {
                   </div>
                   
                   <div className="space-y-4">
-                    <h3 className="text-xl font-light text-slate-800">Ce qui est inclus :</h3>
-                    <ul className="space-y-2">
-                      {service.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center text-slate-600">
-                          <svg className="w-4 h-4 text-slate-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
+                    <h3 className="text-xl font-light text-slate-800">Détails :</h3>
+                    {service.features.length > 0 && (
+                      <div>{service.features.map((feature, idx) => (
+                        <div key={idx}>{feature}</div>
+                      ))}</div>
+                    )}
                   </div>
                   
                   <div className="pt-4">
