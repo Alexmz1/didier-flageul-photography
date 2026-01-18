@@ -217,9 +217,13 @@ export default function Contact() {
                   <div>
                     <div className="font-light text-slate-800 mb-1">Horaires</div>
                     <div className="text-slate-600 space-y-1">
-                      <div>Lundi à Vendredi : 9h00 - 18h00</div>
-                      <div>Samedi : 10h00 - 17h00</div>
-                      <div>Dimanche : Fermé</div>
+                      <div>Lundi&nbsp;: Fermé</div>
+                      <div>Mardi&nbsp;: 09:00–12:00, 14:00–19:00</div>
+                      <div>Mercredi&nbsp;: 09:00–12:00, 14:00–19:00</div>
+                      <div>Jeudi&nbsp;: 09:00–12:00, 14:00–19:00</div>
+                      <div>Vendredi&nbsp;: 09:00–12:00, 14:00–19:00</div>
+                      <div>Samedi&nbsp;: 09:00–12:00, 14:00–19:30</div>
+                      <div>Dimanche&nbsp;: Fermé</div>
                       <div className="text-sm text-slate-500 mt-2">Séances sur rendez-vous uniquement</div>
                     </div>
                   </div>
