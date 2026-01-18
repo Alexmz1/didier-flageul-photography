@@ -1,5 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react'
+import CalendarPicker from '@/components/CalendarPicker';
+import emailjs from '@emailjs/browser';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -14,9 +16,11 @@ export default function Contact() {
   })
 
   const [isSelectOpen, setIsSelectOpen] = useState(false)
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+  // const [isCalendarOpen, setIsCalendarOpen] = useState(false)
   const [isOnVacation, setIsOnVacation] = useState(false)
   const [returnDate, setReturnDate] = useState('')
+  const [formStatus, setFormStatus] = useState('') // '', 'success', 'error', 'empty'
+  const [formMessage, setFormMessage] = useState('')
 
   useEffect(() => {
     const fetchVacationSettings = async () => {
@@ -35,33 +39,7 @@ export default function Contact() {
     fetchVacationSettings()
   }, [])
 
-  useEffect(() => {
-    if (!isCalendarOpen) return
-
-    const calendar = document.querySelector('calendar-date')
-    if (!calendar) return
-
-    const handleDateChange = () => {
-      const selectedDate =
-        calendar.getAttribute('value') ||
-        calendar.value ||
-        calendar.selectedDate ||
-        null
-
-      if (selectedDate) {
-        setFormData(prev => ({
-          ...prev,
-          eventDate: selectedDate
-        }))
-        setIsCalendarOpen(false)
-      }
-    }
-
-    calendar.addEventListener('change', handleDateChange)
-    return () => {
-      calendar.removeEventListener('change', handleDateChange)
-    }
-  }, [isCalendarOpen])
+  // Calendrier custom remplacé par react-datepicker
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -87,16 +65,47 @@ export default function Contact() {
     setIsSelectOpen(false)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    
+    setFormStatus('')
+    setFormMessage('')
     if (!formData.name || !formData.email || !formData.subject || !formData.message) {
-      alert('Veuillez remplir tous les champs obligatoires (marqués par *)')
+      setFormStatus('empty')
+      setFormMessage('Veuillez remplir tous les champs obligatoires (marqués par *)')
       return
     }
-    
-    console.log('Formulaire soumis:', formData)
-    alert('Merci pour votre message ! Je vous répondrai dans les plus brefs délais.')
+    try {
+      await emailjs.send(
+        'service_208jdfr',
+        'template_wlh15rr',
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          eventDate: formData.eventDate,
+          shootingType: formData.shootingType,
+          location: formData.location,
+          message: formData.message,
+        },
+        'ioGHCK38EjSkPYomj'
+      )
+      setFormStatus('success')
+      setFormMessage('Merci pour votre message ! Il a bien été envoyé, je vous répondrai dans les plus brefs délais.')
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        eventDate: '',
+        shootingType: '',
+        location: '',
+        message: ''
+      })
+    } catch (error) {
+      setFormStatus('error')
+      setFormMessage("Une erreur est survenue lors de l'envoi du message. Veuillez réessayer ou contactez-moi directement par email.")
+    }
   }
 
   const shootingOptions = [
@@ -230,8 +239,8 @@ export default function Contact() {
                 </div>
               </div>
 
-            {/* Formulaire de contact - Désactivé temporairement */}
-            {/* <div className="bg-gray-50 p-8 lg:p-12">
+            {/* Formulaire de contact */}
+            <div className="bg-gray-50 p-8 lg:p-12">
               <h3 className="text-2xl font-light text-slate-800 mb-8 text-center">
                 Envoyez-moi un message
               </h3>
@@ -278,50 +287,15 @@ export default function Contact() {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-                  <div className="relative">
-                    <div
-                      className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
-                      onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className={formData.eventDate ? 'text-slate-700' : 'text-slate-400'}>
-                          {formData.eventDate
-                            ? new Date(formData.eventDate + 'T00:00:00').toLocaleDateString('fr-FR', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric'
-                              })
-                            : "Date souhaitée"}
-                        </span>
-                        <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    </div>
-
-                    {isCalendarOpen && (
-                      <>
-                        <div className="absolute top-full left-0 z-50 mt-2 bg-white shadow-lg border border-slate-300 rounded-md p-4">
-                          <calendar-date 
-                            class="cally bg-white"
-                            value={formData.eventDate}
-                            style={{ color: '#1e293b', fontWeight: 400 }}
-                          >
-                            <svg aria-label="Previous" className="fill-current size-4 text-slate-600" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                              <path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
-                            </svg>
-                            <svg aria-label="Next" className="fill-current size-4 text-slate-600" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                              <path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
-                            </svg>
-                            <calendar-month></calendar-month>
-                          </calendar-date>
-                        </div>
-                        <div className="fixed inset-0 z-40" onClick={() => setIsCalendarOpen(false)} />
-                      </>
-                    )}
+                  <div className="relative flex items-center">
+                    <CalendarPicker
+                      value={formData.eventDate}
+                      onChange={date => setFormData(prev => ({ ...prev, eventDate: date }))}
+                      placeholder="Date souhaitée"
+                      className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent text-slate-700 placeholder-slate-400 focus:outline-none focus:border-slate-600"
+                    />
                   </div>
-
-                  {/* Select personnalisé 
+                  
                   <div className="relative">
                     <div
                       className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
@@ -378,17 +352,23 @@ export default function Contact() {
                   className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent text-slate-700 placeholder-slate-400 focus:outline-none focus:border-slate-600 resize-none"
                 />
 
-                <div className="pt-8 text-center">
+                <div className="pt-8 text-center flex flex-col items-center gap-4">
                   <button
                     type="submit"
                     className="bg-slate-800 text-white px-12 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-700 transition"
                   >
                     Envoyer le message
                   </button>
+                  {formStatus && (
+                    <div className={`mt-2 text-base ${formStatus === 'success' ? 'text-green-600' : 'text-red-600'}`}
+                         role="alert">
+                      {formMessage}
+                    </div>
+                  )}
                 </div>
               </form>
             </div>
-          */}
+          
           </div>
         </div>
       </section>
