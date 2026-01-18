@@ -91,14 +91,14 @@ function SortableImage({ image, onEdit, onDelete }) {
       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
         <button
           onClick={() => onEdit(image.url)}
-          className="bg-white hover:bg-slate-800 text-slate-800 hover:text-white px-4 py-2 font-light text-sm transition-colors"
+          className="bg-slate-800 text-white hover:bg-slate-700 px-4 py-2 font-light text-sm transition-colors"
           title="Modifier l'image"
         >
           Modifier
         </button>
         <button
           onClick={() => onDelete(image.url)}
-          className="bg-white hover:bg-red-600 text-slate-800 hover:text-white px-4 py-2 font-light text-sm transition-colors"
+          className="bg-slate-800 text-white hover:bg-red-600 px-4 py-2 font-light text-sm transition-colors"
           title="Supprimer l'image"
         >
           Supprimer

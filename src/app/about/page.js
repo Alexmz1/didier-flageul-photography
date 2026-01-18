@@ -182,7 +182,7 @@ export default function About() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-slate-800 text-white text-center">
+      <section className="py-24 bg-white text-slate-800 text-center">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-light mb-6" 
               style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
@@ -193,8 +193,8 @@ export default function About() {
             créer des photos qui vous ressemblent.
           </p>
           <a 
-            href="/contact" 
-            className="inline-block border border-white text-white px-12 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-white hover:text-slate-800 transition-all duration-500"
+            href="/contact"
+            className="inline-block bg-slate-800 text-white px-12 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-700 border border-slate-800 transition-all duration-500"
           >
             Me contacter
           </a>

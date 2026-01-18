@@ -108,7 +108,7 @@ export default function ShootingSection() {
 
         {/* CTA bas de section */}
         <div className="text-center mt-20">
-          <a href="/services" className="inline-block border border-slate-800 text-slate-800 px-12 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-800 hover:text-white transition-all duration-500">
+          <a href="/services" className="inline-block bg-slate-800 text-white px-12 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-700 border border-slate-800 transition-all duration-500">
             Voir tous les services
           </a>
         </div>
