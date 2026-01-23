@@ -36,7 +36,7 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
     }
 
     try {
-      console.log('📦 Taille originale:', (file.size / 1024).toFixed(2), 'Ko')
+      // ...
       const compressedFile = await imageCompression(file, options)
       
       // Préserver le nom original du fichier
@@ -45,10 +45,10 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
         lastModified: Date.now()
       })
       
-      console.log('✅ Taille compressée:', (newFile.size / 1024).toFixed(2), 'Ko')
+      // ...
       return newFile
     } catch (error) {
-      console.error('Erreur compression:', error)
+      // ...
       throw new Error('Erreur lors de la compression de la photo')
     }
   }
@@ -86,7 +86,7 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
       }
       reader.readAsDataURL(file)
       
-      console.log('🖼️ Image Hero - Pas de compression:', (file.size / 1024).toFixed(0), 'Ko')
+      // ...
     } else {
       // Compression pour les autres catégories
       setCompressing(true)
@@ -129,12 +129,12 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
 
       if (!response.ok) {
         const errorData = await response.json()
-        console.error('Erreur upload:', errorData)
+        // ...
         throw new Error(errorData.error || 'Erreur lors de l\'upload')
       }
 
       const uploadedFile = await response.json()
-      console.log('Image uploadée:', uploadedFile)
+      // ...
 
       // Si on est en mode édition, supprimer l'ancienne image d'UploadThing
       if (editingImage && editingImage.key) {
@@ -147,7 +147,7 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
             body: JSON.stringify({ key: editingImage.key }),
           })
         } catch (error) {
-          console.warn('Erreur lors de la suppression de l\'ancienne image:', error)
+          // ...
         }
       }
 
@@ -175,7 +175,7 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
 
       // Ne pas afficher la notification ici, le parent la gère après sauvegarde en BDD
     } catch (error) {
-      console.error('Erreur upload:', error)
+      // ...
       showNotification(error.message, 'error')
     } finally {
       setIsUploading(false)
@@ -186,7 +186,7 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
     const imageToRemove = images[index]
     
     if (!imageToRemove.key) {
-      console.error('Pas de clé pour cette image')
+      // ...
       showNotification('Impossible de supprimer cette image (clé manquante)', 'error')
       return
     }
@@ -217,7 +217,7 @@ export default function ImageUploader({ images, onImagesChange, maxFiles = 1, ed
 
       showNotification('Image supprimée avec succès !', 'success')
     } catch (error) {
-      console.error('Erreur suppression:', error)
+      // ...
       showNotification(error.message, 'error')
     }
   }

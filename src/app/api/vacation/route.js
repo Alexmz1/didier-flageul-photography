@@ -18,7 +18,7 @@ export async function GET() {
     
     return NextResponse.json(settings)
   } catch (error) {
-    console.error('Error fetching vacation settings:', error)
+    // ...
     return NextResponse.json(
       { error: 'Failed to fetch vacation settings' },
       { status: 500 }
@@ -47,7 +47,7 @@ export async function PUT(request) {
     
     return NextResponse.json(settings)
   } catch (error) {
-    console.error('Error updating vacation settings:', error)
+    // ...
     return NextResponse.json(
       { error: 'Failed to update vacation settings' },
       { status: 500 }

@@ -13,7 +13,7 @@ export async function GET() {
     
     return NextResponse.json(images)
   } catch (error) {
-    console.error('Error fetching images:', error)
+    // ...
     return NextResponse.json(
       { error: 'Failed to fetch images' },
       { status: 500 }
@@ -47,7 +47,7 @@ export async function POST(request) {
     
     return NextResponse.json(image, { status: 201 })
   } catch (error) {
-    console.error('Error creating image:', error)
+    // ...
     return NextResponse.json(
       { error: 'Failed to create image' },
       { status: 500 }
@@ -94,7 +94,7 @@ export async function PUT(request) {
     
     return NextResponse.json(updatedImage)
   } catch (error) {
-    console.error('Error updating image:', error)
+    // ...
     return NextResponse.json(
       { error: 'Failed to update image' },
       { status: 500 }
@@ -121,7 +121,7 @@ export async function DELETE(request) {
     
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error deleting image:', error)
+    // ...
     return NextResponse.json(
       { error: 'Failed to delete image' },
       { status: 500 }

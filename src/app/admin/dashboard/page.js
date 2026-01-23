@@ -161,7 +161,7 @@ export default function AdminDashboard() {
         });
         showNotification('Ordre des images modifié', 'success');
       } catch (error) {
-        console.error('Error saving order:', error);
+        // ...
       }
     }
   };
@@ -182,7 +182,7 @@ export default function AdminDashboard() {
           setImages(data);
         }
       } catch (error) {
-        console.error('Error fetching images:', error);
+        // ...
         showNotification('Erreur lors du chargement des images', 'error');
       }
     };
@@ -208,7 +208,7 @@ export default function AdminDashboard() {
           setReturnDate(data.returnDate || '');
         }
       } catch (error) {
-        console.error('Error fetching vacation settings:', error);
+        // ...
       }
     };
 
@@ -225,7 +225,7 @@ export default function AdminDashboard() {
           setStats(data);
         }
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        // ...
       }
     };
 
@@ -269,7 +269,7 @@ export default function AdminDashboard() {
         body: JSON.stringify({ images: newImages })
       });
     } catch (error) {
-      console.error('Error saving images order:', error);
+      // ...
     }
   };
 
@@ -306,7 +306,7 @@ export default function AdminDashboard() {
         'success'
       );
     } catch (error) {
-      console.error('Error updating vacation settings:', error);
+      // ...
       showNotification('Erreur lors de la mise à jour', 'error');
     }
   };
@@ -325,7 +325,7 @@ export default function AdminDashboard() {
         })
       });
     } catch (error) {
-      console.error('Error updating return date:', error);
+      // ...
     }
   };
 
@@ -356,7 +356,7 @@ export default function AdminDashboard() {
       setImages([...images, ...addedImages]);
       showNotification('Image uploadée avec succès !', 'success');
     } catch (error) {
-      console.error('Error saving images:', error);
+      // ...
       showNotification('Erreur lors de l\'ajout des images', 'error');
     }
   };
@@ -403,7 +403,7 @@ export default function AdminDashboard() {
           showNotification('Catégorie modifiée avec succès !', 'success');
         }
       } catch (error) {
-        console.error('Error updating category:', error);
+        // ...
         showNotification('Erreur lors de la modification', 'error');
       } finally {
         setUploading(false);
@@ -455,7 +455,7 @@ export default function AdminDashboard() {
         showNotification('Image remplacée avec succès !', 'success');
       }
     } catch (error) {
-      console.error('Error replacing image:', error);
+      // ...
       showNotification('Erreur lors du remplacement de l\'image', 'error');
     }
   };
@@ -469,7 +469,7 @@ export default function AdminDashboard() {
     const imageToDelete = images.find((img) => img.url === imageUrl);
     
     if (!imageToDelete || !imageToDelete.key) {
-      console.error('Image ou clé introuvable');
+      // ...
       showNotification('Impossible de supprimer cette image', 'error');
       return;
     }
@@ -504,7 +504,7 @@ export default function AdminDashboard() {
 
       showNotification('Image supprimée avec succès !', 'success');
     } catch (error) {
-      console.error('Erreur suppression:', error);
+      // ...
       showNotification(error.message, 'error');
     }
   };

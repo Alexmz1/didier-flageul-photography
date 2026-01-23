@@ -35,7 +35,7 @@ export default function HeroSection() {
           setImages(defaultImages)
         }
       } catch (error) {
-        console.error('Error fetching hero images:', error)
+        // ...
         setImages(defaultImages)
       }
     }

@@ -32,7 +32,7 @@ export default function Contact() {
           setReturnDate(data.returnDate || '')
         }
       } catch (error) {
-        console.error('Error fetching vacation settings:', error)
+        // ...
       }
     }
 

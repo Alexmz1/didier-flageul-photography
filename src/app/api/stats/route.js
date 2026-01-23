@@ -22,7 +22,7 @@ export async function GET() {
       uploadThingStats.used = Math.round((usageInfo.totalBytes / (1024 * 1024)) * 100) / 100
       uploadThingStats.percentage = Math.round((uploadThingStats.used / uploadThingStats.limit) * 100)
     } catch (error) {
-      console.error('Error fetching UploadThing stats:', error)
+      // ...
       // Fallback sur estimation si l'API échoue
       const heroImages = await prisma.image.count({
         where: { category: "Hero (Page d'accueil)" }
@@ -56,7 +56,7 @@ export async function GET() {
       }
     })
   } catch (error) {
-    console.error('Error fetching stats:', error)
+    // ...
     return NextResponse.json(
       { error: 'Failed to fetch statistics' },
       { status: 500 }

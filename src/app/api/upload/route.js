@@ -22,7 +22,7 @@ export async function POST(request) {
     const response = await utapi.uploadFiles(file);
 
     if (response.error) {
-      console.error("Erreur UploadThing:", response.error);
+      // ...
       return Response.json({ error: response.error.message }, { status: 500 });
     }
 
@@ -32,7 +32,7 @@ export async function POST(request) {
       name: response.data.name,
     });
   } catch (error) {
-    console.error("Erreur lors de l'upload:", error);
+    // ...
     return Response.json(
       { error: error.message || "Erreur lors de l'upload" },
       { status: 500 }
