@@ -144,7 +144,7 @@ export default function GallerySection() {
           setGalleryImages(defaultImages)
         }
       } catch (error) {
-        console.error('Error fetching gallery images:', error)
+        // ...
         setGalleryImages(defaultImages)
       }
     }

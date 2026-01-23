@@ -17,7 +17,7 @@ export async function DELETE(request) {
 
     return Response.json({ success: true, message: "Image supprimée avec succès" });
   } catch (error) {
-    console.error("Erreur lors de la suppression:", error);
+    // ...
     return Response.json(
       { error: error.message || "Erreur lors de la suppression" },
       { status: 500 }

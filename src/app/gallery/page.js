@@ -134,7 +134,7 @@ export default function Gallery() {
           setPhotos([])
         }
       } catch (error) {
-        console.error('Error fetching gallery images:', error)
+        // ...
         setPhotos([])
       }
     }
