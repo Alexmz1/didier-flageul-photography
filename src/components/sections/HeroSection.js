@@ -60,7 +60,7 @@ export default function HeroSection() {
   }
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-black mt-16">      {/* Carousel d'images avec effet Ken Burns */}
+    <section className="relative h-[60vh] md:h-screen w-full overflow-hidden bg-black mt-16">      {/* Carousel d'images avec effet Ken Burns */}
       <div className="absolute inset-0">
         {images.map((image, index) => (
           <div
@@ -108,7 +108,7 @@ export default function HeroSection() {
         <div className="text-center text-white px-6 max-w-6xl mx-auto">
           {/* Logo/Nom du photographe */}
           <div className="mb-16">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-thin mb-8 tracking-[0.15em] leading-tight" 
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-thin mb-8 tracking-[0.15em] leading-tight" 
                 style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
               Didier Flageul
             </h1>
@@ -116,7 +116,7 @@ export default function HeroSection() {
           </div>
 
           {/* Sous-titre */}
-          <h2 className="text-lg md:text-xl uppercase tracking-[0.3em] font-light opacity-90">
+          <h2 className="text-xs xs:text-sm sm:text-base md:text-xl uppercase tracking-[0.3em] font-light opacity-90">
             Photography
           </h2>
         </div>

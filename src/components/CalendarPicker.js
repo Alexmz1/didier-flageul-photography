@@ -147,7 +147,7 @@ export default function CalendarPicker({
   const days = getDaysInMonth(currentMonth)
 
   return (
-    <div className="relative" ref={calendarRef}>
+    <div className="relative max-w-[220px] sm:max-w-xs w-full" ref={calendarRef}>
       <input
         type="text"
         readOnly
@@ -157,8 +157,8 @@ export default function CalendarPicker({
         className={`w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent text-slate-700 placeholder-slate-400 focus:outline-none focus:border-slate-600 ${className}`}
       />
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-gray-200 shadow-lg rounded-lg p-4 min-w-80">
-          <div className="flex items-center justify-between mb-4">
+        <div className="absolute top-full left-0 mt-2 z-50 bg-white border border-gray-200 shadow-lg rounded-lg p-1 sm:p-3 max-w-[180px] sm:max-w-xs w-full">
+          <div className="flex items-center justify-between mb-1 sm:mb-3">
             <button
               type="button"
               onClick={() => navigateMonth(-1)}
@@ -167,7 +167,7 @@ export default function CalendarPicker({
             >
               <ChevronLeftIcon className="h-4 w-4 text-gray-600" />
             </button>
-            <h3 className="text-lg font-medium text-gray-900">
+            <h3 className="text-xs sm:text-base font-medium text-gray-900">
               {MONTHS[currentMonth.getMonth()]} {currentMonth.getFullYear()}
             </h3>
             <button
@@ -179,14 +179,14 @@ export default function CalendarPicker({
               <ChevronRightIcon className="h-4 w-4 text-gray-600" />
             </button>
           </div>
-          <div className="grid grid-cols-7 gap-1 mb-2">
+          <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-0.5 sm:mb-2">
             {DAYS.map(day => (
-              <div key={day} className="p-2 text-center text-sm font-medium text-gray-500">
+              <div key={day} className="p-0.5 sm:p-1 text-center text-[10px] sm:text-xs font-medium text-gray-500">
                 {day}
               </div>
             ))}
           </div>
-          <div className="grid grid-cols-7 gap-1">
+          <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
             {days.map((day, index) => {
               const isDisabled = isDateDisabled(day.date) || !day.isCurrentMonth
               return (
@@ -196,24 +196,24 @@ export default function CalendarPicker({
                   onClick={() => !isDisabled && handleDateSelect(day.date)}
                   disabled={isDisabled}
                   className={`
-                    p-2 text-sm rounded-lg transition-all duration-200 min-h-10
-                    ${day.isCurrentMonth 
-                      ? 'text-gray-900 hover:bg-gray-100' 
-                      : 'text-gray-300'
-                    }
-                    ${day.isSelected 
-                      ? 'bg-blue-600 text-white font-medium hover:bg-blue-700' 
-                      : ''
-                    }
-                    ${day.isToday && !day.isSelected 
-                      ? 'bg-gray-100 font-medium ring-1 ring-gray-300' 
-                      : ''
-                    }
-                    ${isDisabled 
-                      ? 'cursor-not-allowed opacity-40' 
-                      : 'cursor-pointer'
-                    }
-                  `}
+                    p-0.5 sm:p-1 text-[10px] sm:text-xs rounded-lg transition-all duration-200 min-h-6 sm:min-h-8
+                      ${day.isCurrentMonth 
+                        ? 'text-gray-900 hover:bg-gray-100' 
+                        : 'text-gray-300'
+                      }
+                      ${day.isSelected 
+                        ? 'bg-blue-600 text-white font-medium hover:bg-blue-700' 
+                        : ''
+                      }
+                      ${day.isToday && !day.isSelected 
+                        ? 'bg-gray-100 font-medium ring-1 ring-gray-300' 
+                        : ''
+                      }
+                      ${isDisabled 
+                        ? 'cursor-not-allowed opacity-40' 
+                        : 'cursor-pointer'
+                      }
+                    `}
                   style={day.isSelected ? { backgroundColor: '#276f88' } : {}}
                 >
                   {day.date.getDate()}
