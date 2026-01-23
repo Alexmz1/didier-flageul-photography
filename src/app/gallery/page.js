@@ -184,8 +184,7 @@ export default function Gallery() {
           {/* Gallery Grid */}
           {filteredPhotos.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-slate-500 font-light text-xl mb-4">Aucune image dans cette catégorie</p>
-              <p className="text-slate-400 font-light text-sm">Ajoutez des images depuis l'admin</p>
+              <p className="text-slate-500 font-light text-xl mb-4">Aucune photo dans cette catégorie</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
