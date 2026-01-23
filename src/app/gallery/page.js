@@ -173,7 +173,7 @@ export default function Gallery() {
                 className={`px-6 py-3 uppercase tracking-[0.15em] text-sm font-light transition-all duration-300 ${
                   selectedCategory === category.id
                     ? 'bg-slate-800 text-white'
-                    : 'border border-slate-300 text-slate-600 hover:border-slate-800 hover:text-slate-800'
+                    : 'bg-slate-800 text-white hover:bg-slate-700 border border-slate-800'
                 }`}
               >
                 {category.name}
@@ -289,7 +289,7 @@ export default function Gallery() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 bg-slate-800 text-white text-center">
+      <section className="py-24 bg-white text-slate-800 text-center">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-light mb-6" 
               style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
@@ -300,8 +300,8 @@ export default function Gallery() {
             des images qui vous ressemblent.
           </p>
           <a 
-            href="/contact" 
-            className="inline-block border border-white text-white px-12 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-white hover:text-slate-800 transition-all duration-500"
+            href="/contact"
+            className="inline-block bg-slate-800 text-white px-12 py-4 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-700 border border-slate-800 transition-all duration-500"
           >
             Réserver une séance
           </a>

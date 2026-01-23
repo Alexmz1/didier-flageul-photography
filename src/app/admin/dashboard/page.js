@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import CalendarPicker from '@/components/CalendarPicker';
 import ImageUploader from "@/components/admin/ImageUploader";
 import { Playfair_Display, Cormorant_Garamond } from 'next/font/google';
 import {
@@ -90,14 +91,14 @@ function SortableImage({ image, onEdit, onDelete }) {
       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
         <button
           onClick={() => onEdit(image.url)}
-          className="bg-white hover:bg-slate-800 text-slate-800 hover:text-white px-4 py-2 font-light text-sm transition-colors"
+          className="bg-slate-800 text-white hover:bg-slate-700 px-4 py-2 font-light text-sm transition-colors"
           title="Modifier l'image"
         >
           Modifier
         </button>
         <button
           onClick={() => onDelete(image.url)}
-          className="bg-white hover:bg-red-600 text-slate-800 hover:text-white px-4 py-2 font-light text-sm transition-colors"
+          className="bg-slate-800 text-white hover:bg-red-600 px-4 py-2 font-light text-sm transition-colors"
           title="Supprimer l'image"
         >
           Supprimer
@@ -581,46 +582,12 @@ export default function AdminDashboard() {
                       <div className="text-xs font-light text-slate-600 mb-2">
                         Date de retour :
                       </div>
-                      <div
-                        className="w-full px-0 py-2 border-0 border-b border-slate-300 bg-transparent cursor-pointer"
-                        onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-                      >
-                        <div className="flex justify-between items-center">
-                          <span className={`text-sm ${returnDate ? 'text-slate-700' : 'text-slate-400'}`}>
-                            {returnDate
-                              ? new Date(returnDate + 'T00:00:00').toLocaleDateString('fr-FR', {
-                                  day: 'numeric',
-                                  month: 'long',
-                                  year: 'numeric'
-                                })
-                              : "Sélectionner une date"}
-                          </span>
-                          <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                      </div>
-
-                      {isCalendarOpen && (
-                        <>
-                          <div className="absolute top-full left-0 z-50 mt-2 bg-white shadow-lg border border-slate-300 rounded-md p-4">
-                            <calendar-date 
-                              class="cally bg-white"
-                              value={returnDate}
-                              style={{ color: '#1e293b', fontWeight: 400 }}
-                            >
-                              <svg aria-label="Previous" className="fill-current size-4 text-slate-600" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
-                              </svg>
-                              <svg aria-label="Next" className="fill-current size-4 text-slate-600" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
-                              </svg>
-                              <calendar-month></calendar-month>
-                            </calendar-date>
-                          </div>
-                          <div className="fixed inset-0 z-40" onClick={() => setIsCalendarOpen(false)} />
-                        </>
-                      )}
+                      <CalendarPicker
+                        value={returnDate}
+                        onChange={date => setReturnDate(date)}
+                        placeholder="Sélectionner une date"
+                        className="w-full px-0 py-2 border-0 border-b border-slate-300 bg-transparent text-slate-700 placeholder-slate-400 focus:outline-none focus:border-slate-600 text-sm"
+                      />
                     </div>
                   </div>
                 )}

@@ -206,7 +206,7 @@ export default function GallerySection() {
           <p className="text-sm text-slate-500 italic">
             Chaque détail compte pour créer des photographies élégantes et intemporelles
           </p>
-          <a href="/gallery" className="inline-block border border-slate-800 text-slate-800 px-8 py-3 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-800 hover:text-white transition-all duration-500">
+          <a href="/gallery" className="inline-block bg-slate-800 text-white px-8 py-3 uppercase tracking-[0.15em] text-sm font-light hover:bg-slate-700 border border-slate-800 transition-all duration-500">
             Voir toute la galerie
           </a>
         </div>

@@ -40,7 +40,7 @@ export default function CookieBanner() {
           <div className="flex gap-3 flex-shrink-0">
             <button
               onClick={declineCookies}
-              className="px-6 py-2.5 text-sm font-light text-slate-700 border border-slate-300 hover:bg-slate-50 transition-colors uppercase tracking-wider"
+              className="px-6 py-2.5 text-sm font-light text-white bg-slate-800 hover:bg-slate-700 transition-colors uppercase tracking-wider"
             >
               Refuser
             </button>
