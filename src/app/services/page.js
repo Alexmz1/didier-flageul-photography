@@ -6,7 +6,7 @@ export default function Services() {
       id: "mariage",
       title: "Mariages",
       description: "Séparez les offres pour mieux choisir selon votre projet.",
-      image: "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "/mariage/DFC_9065.jpg",
       price: "",
       features: [
         <>
@@ -27,7 +27,7 @@ export default function Services() {
       id: "seance-couple",
       title: "Couple",
       description: "Séance photo en duo, lieu au choix du couple.",
-      image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "/couple/DFC_7731.jpg",
       price: "",
       features: [
         <>
@@ -43,7 +43,7 @@ export default function Services() {
       id: "portrait-individuel",
       title: "Portrait Individuel",
       description: "Portrait artistique ou corporate, pour book ou réseaux sociaux.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "/portraits/DFS_3275.jpg",
       price: "",
       features: [
         <>
@@ -59,7 +59,7 @@ export default function Services() {
       id: "famille-maternite",
       title: "Famille & Maternité",
       description: "Séance sur devis uniquement.",
-      image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "/studio/YUL_8993.jpg",
       price: "",
       features: [
         <>
@@ -99,8 +99,9 @@ export default function Services() {
                     alt={service.title}
                     width={800}
                     height={500}
+                    quality={100}
                     loading="lazy"
-                    className="w-full h-[400px] lg:h-[500px] object-cover"
+                    className={`w-full h-[400px] lg:h-[500px] object-cover${service.title === 'Couple' ? ' object-[center_5%]' : ''}`}
                   />
                 </div>
                 

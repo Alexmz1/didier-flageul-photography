@@ -5,7 +5,7 @@ export default function ShootingSection() {
     {
       title: "Mariage",
       description: "Deux offres : civil/religieux ou pack complet.",
-      image: "https://images.unsplash.com/photo-1606800052052-a08af7148866?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "/mariage/D3S_1528.jpg",
       duration: "Selon formule",
       price: "À partir de 750€ (civil/religieux) / 1500€ (pack complet)",
       link: "/services#mariage"
@@ -13,7 +13,7 @@ export default function ShootingSection() {
     {
       title: "Séance Couple", 
       description: "Séance photo en duo, lieu au choix du couple.",
-      image: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "/couple/DFC_7731.jpg",
       duration: "À partir de 1h",
       price: "200€ / h",
       link: "/services#seance-couple"
@@ -21,7 +21,7 @@ export default function ShootingSection() {
     {
       title: "Portrait Individuel",
       description: "Portrait artistique ou corporate, pour book ou réseaux sociaux.",
-      image: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "/portraits/DFS_0359.jpg",
       duration: "À partir de 1h",
       price: "175€ / h (1 photo 20x30) | Corporate : 200€ / h",
       link: "/services#portrait-individuel"
@@ -29,7 +29,7 @@ export default function ShootingSection() {
     {
       title: "Famille & Maternité",
       description: "Séance sur devis uniquement.",
-      image: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "/pregnancy/Didier_FLAGEUL_Photography_photographe-grossesse-shooting-soisy-sur-seine-essonne_france_nb_1.jpg",
       duration: "Sur devis",
       price: "Sur devis",
       link: "/services#famille-maternite"
@@ -66,8 +66,9 @@ export default function ShootingSection() {
                   alt={shooting.title}
                   width={400}
                   height={320}
+                  quality={100}
                   loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105${shooting.title === 'Séance Couple' ? ' object-[center_5%]' : ''}`}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
