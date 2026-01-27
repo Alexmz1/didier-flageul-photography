@@ -26,6 +26,7 @@ export default function Header() {
             <Link href="/about" className="hover:text-slate-300 transition-colors duration-300">À propos</Link>
             <Link href="/services" className="hover:text-slate-300 transition-colors duration-300">Services</Link>
             <Link href="/gallery" className="hover:text-slate-300 transition-colors duration-300">Galerie</Link>
+            <Link href="/partenaires" className="hover:text-slate-300 transition-colors duration-300">Partenaires</Link>
             <Link href="/contact" className="hover:text-slate-300 transition-colors duration-300">Contact</Link>
           </nav>
 
@@ -59,6 +60,7 @@ export default function Header() {
           <Link href="/about" className="block py-2 hover:text-slate-300 transition-colors duration-300" onClick={toggleMenu}>À propos</Link>
           <Link href="/services" className="block py-2 hover:text-slate-300 transition-colors duration-300" onClick={toggleMenu}>Services</Link>
           <Link href="/gallery" className="block py-2 hover:text-slate-300 transition-colors duration-300" onClick={toggleMenu}>Galerie</Link>
+          <Link href="/partenaires" className="block py-2 hover:text-slate-300 transition-colors duration-300" onClick={toggleMenu}>Partenaires</Link>
           <Link href="/contact" className="block py-2 hover:text-slate-300 transition-colors duration-300" onClick={toggleMenu}>Contact</Link>
         </div>
       )}
