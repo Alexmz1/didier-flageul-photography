@@ -15,6 +15,7 @@ export default function Footer() {
           <Link href="/about" className="hover:text-slate-300 transition-colors duration-300">À propos</Link>
           <Link href="/services" className="hover:text-slate-300 transition-colors duration-300">Services</Link>
           <Link href="/gallery" className="hover:text-slate-300 transition-colors duration-300">Galerie</Link>
+          <Link href="/partenaires" className="hover:text-slate-300 transition-colors duration-300">Partenaires</Link>
           <Link href="/contact" className="hover:text-slate-300 transition-colors duration-300">Contact</Link>
         </div>
         
