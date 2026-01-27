@@ -5,7 +5,7 @@ export default function ShootingSection() {
     {
       title: "Mariage",
       description: "Deux offres : civil/religieux ou pack complet.",
-      image: "/mariage/D3S_1528.jpg",
+      image: "/mariage/DF_Mariage.jpeg",
       duration: "Selon formule",
       price: "À partir de 750€ (civil/religieux) / 1500€ (pack complet)",
       link: "/services#mariage"
@@ -82,12 +82,16 @@ export default function ShootingSection() {
                   {shooting.description}
                 </p>
                 <div className="space-y-2 pt-4">
-                  <p className="text-xs uppercase tracking-wider text-slate-500">
-                    Durée : {shooting.duration}
-                  </p>
-                  <p className="text-sm font-light text-slate-700">
-                    {shooting.price}
-                  </p>
+                  {shooting.title !== "Famille & Maternité" && (
+                    <>
+                      <p className="text-xs uppercase tracking-wider text-slate-500">
+                        Durée : {shooting.duration}
+                      </p>
+                      <p className="text-sm font-light text-slate-700">
+                        {shooting.price}
+                      </p>
+                    </>
+                  )}
                 </div>
                 <div className="pt-6 mt-auto">
                   <a 
