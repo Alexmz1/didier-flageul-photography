@@ -1,15 +1,54 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const [promo, setPromo] = useState(null)
 
   const toggleMenu = () => setIsOpen(!isOpen)
 
+  useEffect(() => {
+    const fetchPromo = async () => {
+      try {
+        const response = await fetch('/api/promo')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.isCurrentlyActive) {
+            setPromo(data)
+          }
+        }
+      } catch (error) {
+        // ...
+      }
+    }
+
+    fetchPromo()
+  }, [])
+
   return (
     <header className="w-full bg-slate-800 text-white fixed top-0 z-50 shadow-sm h-auto">
+      {promo && (
+        <div className="bg-slate-900 border-b border-slate-700">
+          <div className="max-w-7xl mx-auto px-4 py-2 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3 text-center">
+            <span className="text-xs font-light uppercase tracking-wider">
+              {promo.title || 'Offre en cours'}
+            </span>
+            {promo.price && (
+              <span className="text-xs font-light text-slate-300">
+                {promo.price}
+              </span>
+            )}
+            <Link
+              href="/#promo"
+              className="text-xs font-light underline underline-offset-4 hover:text-slate-300 transition-colors"
+            >
+              En savoir plus
+            </Link>
+          </div>
+        </div>
+      )}
       <div className="max-w-7xl mx-auto px-4 py-4">
 
         {/* Main header content */}

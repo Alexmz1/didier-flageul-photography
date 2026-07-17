@@ -35,3 +35,16 @@ model VacationSettings {
 
   @@map("vacation_settings")
 }
+
+model PromoSettings {
+  id          String   @id @default(cuid())
+  isActive    Boolean  @default(false)
+  title       String?
+  description String?
+  price       String?
+  startDate   String?
+  endDate     String?
+  updatedAt   DateTime @updatedAt
+
+  @@map("promo_settings")
+}
