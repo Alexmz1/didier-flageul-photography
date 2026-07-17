@@ -11,11 +11,8 @@ export default function Services() {
       features: [
         <>
           <div className="mb-2 font-semibold text-slate-800 text-lg">À partir de 750€</div>
-          <ul className="mb-4 list-disc ml-6 text-slate-600 text-base">
-            <li>Mariage civil / religieux</li>
-          </ul>
-          <div className="mb-2 font-semibold text-slate-800 text-lg">À partir de 1500€</div>
           <ul className="list-disc ml-6 text-slate-600 text-base">
+            <li>Mariage civil / religieux</li>
             <li>Préparation mariée</li>
             <li>Photos couple, parc, mairie, lieu de culte</li>
             <li>Vin d’honneur, soirée, gâteau/pièce montée</li>
