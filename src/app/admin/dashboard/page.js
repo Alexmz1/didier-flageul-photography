@@ -123,8 +123,15 @@ export default function AdminDashboard() {
   const [isOnVacation, setIsOnVacation] = useState(false);
   const [returnDate, setReturnDate] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('gallery'); // 'gallery' ou 'stats'
+  const [activeSection, setActiveSection] = useState('gallery'); // 'gallery', 'stats' ou 'promo'
   const [stats, setStats] = useState(null);
+  const [promoActive, setPromoActive] = useState(false);
+  const [promoTitle, setPromoTitle] = useState('');
+  const [promoDescription, setPromoDescription] = useState('');
+  const [promoPrice, setPromoPrice] = useState('');
+  const [promoStartDate, setPromoStartDate] = useState('');
+  const [promoEndDate, setPromoEndDate] = useState('');
+  const [savingPromo, setSavingPromo] = useState(false);
   
   const IMAGES_PER_PAGE = 8; // 2 lignes de 4 images
 
@@ -213,6 +220,28 @@ export default function AdminDashboard() {
     };
 
     fetchVacationSettings();
+  }, []);
+
+  // Charger les paramètres de la promo depuis l'API
+  useEffect(() => {
+    const fetchPromoSettings = async () => {
+      try {
+        const response = await fetch('/api/promo');
+        if (response.ok) {
+          const data = await response.json();
+          setPromoActive(data.isActive);
+          setPromoTitle(data.title || '');
+          setPromoDescription(data.description || '');
+          setPromoPrice(data.price || '');
+          setPromoStartDate(data.startDate || '');
+          setPromoEndDate(data.endDate || '');
+        }
+      } catch (error) {
+        // ...
+      }
+    };
+
+    fetchPromoSettings();
   }, []);
 
   // Charger les statistiques
@@ -326,6 +355,58 @@ export default function AdminDashboard() {
       });
     } catch (error) {
       // ...
+    }
+  };
+
+  const handlePromoToggle = async () => {
+    const newStatus = !promoActive;
+    setPromoActive(newStatus);
+
+    try {
+      await fetch('/api/promo', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isActive: newStatus,
+          title: promoTitle,
+          description: promoDescription,
+          price: promoPrice,
+          startDate: promoStartDate || null,
+          endDate: promoEndDate || null
+        })
+      });
+
+      showNotification(
+        newStatus ? 'Promo activée' : 'Promo désactivée',
+        'success'
+      );
+    } catch (error) {
+      // ...
+      showNotification('Erreur lors de la mise à jour', 'error');
+    }
+  };
+
+  const handleSavePromo = async () => {
+    setSavingPromo(true);
+    try {
+      await fetch('/api/promo', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isActive: promoActive,
+          title: promoTitle,
+          description: promoDescription,
+          price: promoPrice,
+          startDate: promoStartDate || null,
+          endDate: promoEndDate || null
+        })
+      });
+      showNotification('Promo enregistrée', 'success');
+    } catch (error) {
+      // ...
+      showNotification('Erreur lors de l\'enregistrement de la promo', 'error');
+    } finally {
+      setSavingPromo(false);
     }
   };
 
@@ -629,6 +710,16 @@ export default function AdminDashboard() {
                 }`}
               >
                 Statistiques
+              </button>
+              <button
+                onClick={() => setActiveSection('promo')}
+                className={`px-6 py-4 font-light transition-all border-b-2 ${
+                  activeSection === 'promo'
+                    ? 'border-slate-800 text-slate-800'
+                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                Promo
               </button>
             </div>
           </div>
@@ -1012,6 +1103,129 @@ export default function AdminDashboard() {
                 <span className="loading loading-spinner loading-lg"></span>
               </div>
             )}
+          </div>
+        </div>
+        )}
+
+        {/* Section Promo */}
+        {activeSection === 'promo' && (
+        <div className="bg-gray-50 py-16 px-6">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl font-light text-slate-800 mb-8 text-center"
+                style={{ fontFamily: "'Cormorant Garamond', 'Playfair Display', serif" }}>
+              Promotion
+            </h2>
+            <div className="w-16 h-px bg-slate-300 mx-auto mb-12"></div>
+
+            <div className="bg-white p-8 shadow-sm space-y-8">
+              {/* Checkbox Activer la promo */}
+              <label htmlFor="promo-active" className="flex items-center cursor-pointer group w-fit">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    id="promo-active"
+                    checked={promoActive}
+                    onChange={handlePromoToggle}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-6 h-6 border-2 rounded-md flex items-center justify-center transition-all ${
+                      promoActive
+                        ? 'border-slate-800 bg-slate-800'
+                        : 'border-slate-300 group-hover:border-slate-400'
+                    }`}
+                  >
+                    {promoActive && (
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <span className="ml-3 text-sm font-light text-slate-700">
+                  Activer la promotion
+                </span>
+              </label>
+
+              {/* Titre */}
+              <div>
+                <label className="block text-sm font-light text-slate-700 mb-2">
+                  Titre
+                </label>
+                <input
+                  type="text"
+                  value={promoTitle}
+                  onChange={(e) => setPromoTitle(e.target.value)}
+                  placeholder="Ex : Photo 50x75 cm encadrée"
+                  className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent text-slate-700 placeholder-slate-400 focus:outline-none focus:border-slate-600"
+                />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-light text-slate-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  rows={3}
+                  value={promoDescription}
+                  onChange={(e) => setPromoDescription(e.target.value)}
+                  placeholder="Ex : Une photo 50x75 cm avec son cadre offerte pour toute réservation durant cette période."
+                  className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent text-slate-700 placeholder-slate-400 focus:outline-none focus:border-slate-600 resize-none"
+                />
+              </div>
+
+              {/* Prix */}
+              <div>
+                <label className="block text-sm font-light text-slate-700 mb-2">
+                  Prix
+                </label>
+                <input
+                  type="text"
+                  value={promoPrice}
+                  onChange={(e) => setPromoPrice(e.target.value)}
+                  placeholder="Ex : 89€ au lieu de 129€"
+                  className="w-full px-0 py-3 border-0 border-b border-slate-300 bg-transparent text-slate-700 placeholder-slate-400 focus:outline-none focus:border-slate-600"
+                />
+              </div>
+
+              {/* Dates */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <div className="text-sm font-light text-slate-700 mb-2">
+                    Date de début
+                  </div>
+                  <CalendarPicker
+                    value={promoStartDate}
+                    onChange={date => setPromoStartDate(date)}
+                    placeholder="Sélectionner une date"
+                    className="w-full px-0 py-2 border-0 border-b border-slate-300 bg-transparent text-slate-700 placeholder-slate-400 focus:outline-none focus:border-slate-600 text-sm"
+                  />
+                </div>
+                <div>
+                  <div className="text-sm font-light text-slate-700 mb-2">
+                    Date de fin
+                  </div>
+                  <CalendarPicker
+                    value={promoEndDate}
+                    onChange={date => setPromoEndDate(date)}
+                    placeholder="Sélectionner une date"
+                    minDate={promoStartDate || undefined}
+                    className="w-full px-0 py-2 border-0 border-b border-slate-300 bg-transparent text-slate-700 placeholder-slate-400 focus:outline-none focus:border-slate-600 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <button
+                  onClick={handleSavePromo}
+                  disabled={savingPromo}
+                  className="bg-slate-800 hover:bg-slate-900 text-white font-light px-8 py-3 transition-colors uppercase tracking-wider text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {savingPromo ? 'Enregistrement...' : 'Enregistrer la promo'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         )}
