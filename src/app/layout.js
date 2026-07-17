@@ -2,6 +2,7 @@ import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CookieBanner from '@/components/CookieBanner'
+import ContactFab from '@/components/ContactFab'
 import SessionProvider from '@/components/SessionProvider'
 import Script from 'next/script'
 
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
           <main>{children}</main>
           <Footer />
           <CookieBanner />
+          <ContactFab />
         </SessionProvider>
       </body>
     </html>
